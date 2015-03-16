@@ -1,0 +1,446 @@
+*{
+	padding:0;
+	margin:0;
+  box-sizing: border-box;
+}
+
+/* Clearfix
+============================================================ */
+clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+/*
+==============================================================*/
+
+
+/* Grid
+===============================================================*/
+.col-container{
+    width: 100%;
+}
+/*There are three columns in the header section, they contain back button, app title and
+Menu Navigation button. */
+
+.col-header{
+    /* 10 + 10 + 70 = 90%, margin left is 10% that will be divided over two spacing. %*/
+    float: left;
+    width: 100%;
+}
+
+.col-container{
+    width: 100%;
+}
+
+.col-3{
+    float: left;
+    width: 15%;
+    height: 3.5rem; /* same height as list item*/
+}
+
+.col-3:nth-child(2){
+    width: 70%;
+}
+
+@media screen and (orientation:landscape){
+    .col-3{
+        width: 10%;
+    }
+
+    .col-3:nth-child(2){
+        width: 80%;
+    }
+}
+
+
+/*
+===============================================================*/
+
+html{
+	width:100%;
+	height:100%;
+    background: hsl(69,45%,82%);
+    font-family: Calibri, Arial, Helvetica, sans-serif; /* First Font-Family Stack*/
+ }
+
+body,
+.st-container{
+    /* Let the body fills the whole page vertically*/
+    height: 100%;
+}
+
+
+
+/* This class is applied on body tag so that root font-size is set according to different screen
+sizes. Then any text paragraph can be set using rem unit. */
+.flexible-font{
+    font-size: 5vmin;
+}
+
+p{
+    font-size: 1.2rem;
+}
+
+/*h2, h3, p{
+	padding:0.6rem 2rem;
+}*/
+h2{
+    padding: 1rem 0;
+}
+
+h1,h2,h3,h4{
+    font-family: Tahoma, Verdana, Geneva; /* Second Font-Family Stack*/
+}
+
+
+/* Keep the scrollability of the web app but hide scrollbar as it has bad style on Devices' browser. */
+::-webkit-scrollbar {
+    display: none;
+}
+
+.vertical-center{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.horizontal-align{
+  padding-left: 5%;
+}
+
+/*
+============================================================*/
+
+/* Header Styling
+============================================================*/
+header{
+    position: fixed;
+    top:0px;
+    background-color: hsl(69,54%,21%);
+    height: 60px;
+    z-index: 10;
+    transition: 0.5s margin ease;
+}
+
+[data-role="header"] h1{
+  text-shadow: 3px 2px 2px #475500;
+  -webkit-text-stroke: 1px #475500;
+  color: white;
+  text-align:center;
+  letter-spacing:0.3rem;
+  word-spacing: 1rem;
+  font-variant:small-caps;
+  /* increase the dueration of text stretch animation so that it won't capture the users's eye*/
+  -webkit-animation: text-stretch 2s infinite;
+  -webkit-animation-direction: alternate;
+  /*font-size: 1.5rem;*/
+}
+
+/*
+============================================================*/
+
+/* Pages styling
+=============================================================*/
+[data-role=page]{
+    display: none;
+    position: absolute;
+    top: 60px;
+    color: hsl(69,54%,21%);
+    min-height: 100%;
+    width: 100%;
+    z-index: 5;
+}
+
+.active-page{
+/*    forwards value will keep the styles declared within the last specified keyframe i.e.
+    opacity of destination page will remain 1. */
+    -webkit-animation: fade_in 1s ease-in-out forwards,
+                       rotation_and_zoom_in 1s ease-in-out forwards;
+/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
+    -moz-animation   : fade_in 4s ease-in-out forwards,
+                       zoome_in 4s ease-in-out forwards;
+/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
+    -o-animation     : fade_in 4s ease-in-out forwards,
+                       zoome_in 4s ease-in-out forwards;
+/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
+    animation        : fade_in 4s ease-in-out forwards,
+                       zoome_in 4s ease-in-out forwards;
+/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
+}
+
+.show{
+	display:block;
+}
+.hide{
+	display:none;
+}
+
+/* Sticky Footer styling
+===============================================================*/
+footer {
+    background-color: hsl(69,54%,21%);
+    /* Adjust position of footer with respect to main content div.*/
+    position: fixed;
+    bottom: 0;
+    height: 60px; /* Same height as header*/
+    width: 100%;
+    z-index: 10;
+}
+
+
+/* Location page styling
+==================================================================*/
+#inner-arch{
+    fill: #C6ED00;
+    /* Since artboard size is 300x300, change point around which rotation will take place to be middle of artboard instead of 0 0 (top-left corner)*/
+    transform-origin: 150px 150px;
+    -webkit-animation:  rotate 1s linear infinite;
+    -moz-animation   :  rotate 1s linear infinite;
+    -o-animation     :  rotate 1s linear infinite;
+    animation        :  rotate 1s linear infinite;
+}
+
+#canvas-map{
+    padding-left: 2rem;
+    width: 70%;
+}
+
+/* Conract Page Styling
+====================================================================*/
+[data-role=listview]{
+  list-style:none;
+}
+[data-role=listview] li{
+  font-size:1.2rem;
+  line-height:3.5rem;
+  height:3.5rem;
+  border:1px solid hsl(69,54%,21%);
+  background-color: hsl(69, 48%, 71%);
+  font-weight:300;
+  cursor:pointer;
+  color: hsl(69,54%,21%);
+}
+
+[data-role=listview] li:nth-child(even){
+    background-color: white;
+}
+
+[data-role=listview] li:hover{
+    background-color: hsla(69, 54%, 21% , 0.5);
+}
+
+
+[data-role=listview] li:last-child{
+  margin-bottom: 60px; /* Same height of the footer, since it is fixed position. */
+}
+
+.contact-img{
+  width: 48px;
+  height: 48px;
+}
+
+.contact-name{
+    display: inline-block;
+    overflow: hidden;
+}
+
+.next_item_polygon{
+    fill: hsl(69,54%,21%);
+}
+
+/* Animations
+==================================================================*/
+/**********  FADE IN ANIMATION ************/
+@-webkit-keyframes fade_in{
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+@-moz-keyframes fade_in{
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+@-o-keyframes fade_in{
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+@keyframes fade_in {
+    0%{opacity: 0;}
+    100%{opacity: 1;}
+}
+/**********  ZOOM IN ANIMATION ************/
+@-webkit-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@-moz-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@-o-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+
+/**********  ROTATION & ZOOM-IN ANIMATION ************/
+@-webkit-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@-moz-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@-o-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+
+/**********  ROTATE ANIMATION ************/
+@-webkit-keyframes rotate{
+
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-moz-keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-o-keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes text-stretch {
+			0% {
+				-webkit-text-stroke: 15px #B1D400;
+				letter-spacing: 0;
+			}
+			100% {
+				-webkit-text-stroke: 20px #475500;
+				letter-spacing: 10px;
+			}
+}
