@@ -219,22 +219,59 @@ var siteNavigator = (function(){
         delete pagesArray; //Free the memory to increase performance.
 
         doPageTransition(null, "contacts");
+
+        /* Add tap/double tap event listeners to list view of contacts. */
+        var contactsListView = document.querySelector('ul[data-role="listview"]');
+
+        /* Relate tap and double tap events to list view of contacts using hammer API */
+        var hammerManager = new Hammer.Manager(contactsListView);
+
+        /* Create specifications for single tap and double tap events. */
+        var doubleTapEvent = new Hammer.Tap({ event: 'doubletap', taps: 2 }) ;
+        var singleTapEvent = new Hammer.Tap({ event: 'singletap', domEvents:true });
+
+        /* Add single/double tap events to hammer manager.*/
+        hammerManager.add( doubleTapEvent );
+        hammerManager.add( singleTapEvent);
+
+        /* we want to recognize single/double tap simulatenously. Otherwise single tap handler will be always triggered during double tap event.
+        So a double tap will be detected even a single tap has been recognized.*/
+        doubleTapEvent.recognizeWith('singletap');
+
+        /* we only want to trigger a tap, when we don't have detected a doubletap. */
+        singleTapEvent.requireFailure('doubletap');
+
+        /* register handler for single/double tap events. */
+        hammerManager.on("doubletap", handleDoubleTap );
+        hammerManager.on("singletap", handleSingleTap);
+
+    }
+
+    var handleDoubleTap = function(ev){
+        console.log("Double tap event has been recognized");
+        /* TODO: transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
+    }
+
+    var handleSingleTap = function(ev){
+        console.log("Single tap event has been recognized");
+
+        /* TODO: display modal window that will display the contact's name as well as all phone numbers for that contact.*/
     }
 
     //handle the click event
-    var handleNav = function (ev){
-        ev.preventDefault();
+    // var handleNav = function (ev){
+    //     ev.preventDefault();
 
-        /* Since the handlers of click/touch listeners are registered using bubbling
-        propatation. Also the handlers are registered for acnhor tags not for SVG tags.
-        Accordingly, currentTarget must be used instead of target to get href attribute
-        of anchor tag.*/
-        var href = ev.currentTarget.href;
-        var destPageId = href.split("#")[1];
-        var srcPageId = document.URL.split("#")[1];
-        doPageTransition(srcPageId, destPageId, true);
-        return false;
-    }
+    //     //  Since the handlers of click/touch listeners are registered using bubbling
+    //     // propatation. Also the handlers are registered for acnhor tags not for SVG tags.
+    //     // Accordingly, currentTarget must be used instead of target to get href attribute
+    //     // of anchor tag.
+    //     var href = ev.currentTarget.href;
+    //     var destPageId = href.split("#")[1];
+    //     var srcPageId = document.URL.split("#")[1];
+    //     doPageTransition(srcPageId, destPageId, true);
+    //     return false;
+    // }
 
     var loadDynamicContents = function(pageId){
         switch(pageId){
