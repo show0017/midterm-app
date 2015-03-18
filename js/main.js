@@ -117,12 +117,17 @@ var contacts = (function(){
         return phones;
     }
 
+    var saveToLocalStorage = function (listOfContacts){
+        console.error("saveToLocalStorage to be implemented");
+    }
+
     return{
         load: load,
         getEntries: getEntries,
         getAddresses: getAddresses,
         getEmails: getEmails,
-        getPhoneNumbers: getPhoneNumbers
+        getPhoneNumbers: getPhoneNumbers,
+        saveToLocalStorage: saveToLocalStorage
     }
 })();
 
@@ -206,8 +211,12 @@ var siteNavigator = (function(){
     var pages = {};
     var numPages = 0;
     var currentPageId = null;
+    var modalSection;
 
     var init = function(){
+
+        modalSection = document.querySelector('[data-role="modal"]');
+
         var pagesArray = document.querySelectorAll('[data-role="page"]');
         numPages = pagesArray.length;
 
@@ -224,15 +233,15 @@ var siteNavigator = (function(){
         var contactsListView = document.querySelector('ul[data-role="listview"]');
 
         /* Relate tap and double tap events to list view of contacts using hammer API */
-        var hammerManager = new Hammer.Manager(contactsListView);
+        var contactListHammerManager = new Hammer.Manager(contactsListView);
 
         /* Create specifications for single tap and double tap events. */
         var doubleTapEvent = new Hammer.Tap({ event: 'doubletap', taps: 2 }) ;
         var singleTapEvent = new Hammer.Tap({ event: 'singletap', domEvents:true });
 
         /* Add single/double tap events to hammer manager.*/
-        hammerManager.add( doubleTapEvent );
-        hammerManager.add( singleTapEvent);
+        contactListHammerManager.add( doubleTapEvent );
+        contactListHammerManager.add( singleTapEvent);
 
         /* we want to recognize single/double tap simulatenously. Otherwise single tap handler will be always triggered during double tap event.
         So a double tap will be detected even a single tap has been recognized.*/
@@ -242,20 +251,47 @@ var siteNavigator = (function(){
         singleTapEvent.requireFailure('doubletap');
 
         /* register handler for single/double tap events. */
-        hammerManager.on("doubletap", handleDoubleTap );
-        hammerManager.on("singletap", handleSingleTap);
+        contactListHammerManager.on("doubletap", handleContactDoubleTap );
+        contactListHammerManager.on("singletap", handleContactSingleTap);
 
+        var cancelBtnHammerManager = new Hammer( document.getElementById("btnCancel"));
+        cancelBtnHammerManager.on('tap', handleCancelTap);
+
+        var okBtnHammerManager = new Hammer( document.getElementById("btnOk"));
+        okBtnHammerManager.on('tap', handleOkTap);
     }
 
-    var handleDoubleTap = function(ev){
+    var handleCancelTap = handleOkTap = function(ev){
+        modalSection.className = "hide";
+    }
+
+    var handleContactDoubleTap = function(ev){
         console.log("Double tap event has been recognized");
         /* TODO: transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
     }
 
-    var handleSingleTap = function(ev){
+    var handleContactSingleTap = function(ev){
         console.log("Single tap event has been recognized");
 
-        /* TODO: display modal window that will display the contact's name as well as all phone numbers for that contact.*/
+        /* display modal window that will display the contact's name as well as all phone numbers for that contact. */
+
+        /* Get which list item have been tapped. Since hammer.js does not have currentTarget property, a backward
+         * navigation must be done. */
+         var currentTarget = ev.target;
+         var contactId = currentTarget.getAttribute("data-ref");
+         while(null === contactId){
+            currentTarget = currentTarget.parentNode;
+            contactId     = currentTarget.getAttribute("data-ref");
+            console.log(currentTarget);
+         }
+
+         /* Make sure that we find a valid contanct list item */
+         if(contactId){
+            /* TODO: Get all information stored in local storage. */
+         }
+
+         modalSection.className = "show";
+
     }
 
     //handle the click event
@@ -282,6 +318,8 @@ var siteNavigator = (function(){
                 // if(contacts.getEntries()){
 
                 // }
+
+                /* TODO: Save displayed contacts to local storage. */
                 break;
             case "location":
 

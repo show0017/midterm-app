@@ -194,6 +194,7 @@ header{
 /* Sticky Footer styling
 ===============================================================*/
 footer {
+    color: white;
     background-color: hsl(69,54%,21%);
     /* Adjust position of footer with respect to main content div.*/
     position: fixed;
@@ -221,7 +222,7 @@ footer {
     width: 70%;
 }
 
-/* Conract Page Styling
+/* Conact Page Styling
 ====================================================================*/
 [data-role=listview]{
   list-style:none;
@@ -263,6 +264,74 @@ footer {
 .next_item_polygon{
     fill: hsl(69,54%,21%);
 }
+
+/* Overlay and Modal window
+==================================================================*/
+[data-role=modal]{
+
+}
+
+[data-role=overlay]{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:15; /* Make it larger than z-index of both header and footer. */
+  height:100%;
+  width:100%;
+  background-color: rgba(0,0,0,0.82);
+}
+
+[data-role=modal-details]{
+  position:fixed;
+  top:20%;
+  left:10%;
+  width: 80%;
+  z-index:20; /* Make it larger than z-index of overlay div so that contents can be display. */
+  max-height:80%;
+  padding:5vh;
+  border:1px solid #333;
+  min-height:10%;
+  color:#fff;
+  background-color: hsl(69,54%,21%);
+  box-shadow:1px 1px 2px rgb(0,0,0);
+}
+
+table tr{
+    text-align: left;
+    font-size: 1.2rem;
+}
+
+table tr th{
+    font-size: 1.2rem;
+    width: 20%;
+    padding: 1.2rem 0;
+    /*text-align: right;*/
+}
+
+table tr td img{
+    width: 150px;
+    height: 150px;
+}
+
+.btn{
+    border: 0;
+    float: left;
+    width: 50%;
+    height: 2.5rem;
+    outline: 1px solid hsl(69,54%,21%);
+    background-color: hsl(69,45%,82%);
+}
+
+.btn:first-child{
+    border-right: 1px solid hsl(69,54%,21%);
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active{
+    background-color: hsl(69, 48%, 71%);
+}
+
 
 /* Animations
 ==================================================================*/
