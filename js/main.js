@@ -4,7 +4,7 @@ var show0017 = (function(){
 
 
     var init = function(){
-        document.addEventListener("deviceready", onReady, false);
+        document.addEventListener("deviceready", onDeviceReady, false);
         document.addEventListener("DOMContentLoaded", onPageLoaded, false);
         window.addEventListener("resize", onWindowResize, true);
 
@@ -22,6 +22,9 @@ var show0017 = (function(){
     var onPageLoaded = function(){
         console.log("Page is loaded");
         utilities.setBit(PAGE_LOADED_BIT_INDEX);
+
+        /*TODO: remove the following line when you are testing on real device. */
+        position.triggerRequest();
         /*TODO: remove the following line when you are testing on real device.*/
         siteNavigator.init();
 
@@ -35,7 +38,7 @@ var show0017 = (function(){
             utilities.isBitSet(PAGE_LOADED_BIT_INDEX)){
             siteNavigator.init();
             contacts.load();
-            position.getCurrentLocation();
+            position.triggerRequest();
         }else{
             console.log("Both evenets has not been fired yet");
         }
@@ -166,8 +169,9 @@ var svgIcons = (function(){
 
 var position = (function (){
 
+    var coordinates = {"lat":-1, "lng":-1};
 
-    var getCurrentLocation = function(){
+    var triggerRequest = function(){
       if( navigator.geolocation ){
           var params = {enableHighAccuracy: false, timeout:3600, maximumAge:60000};
           navigator.geolocation.getCurrentPosition( reportPosition, gpsError, params );
@@ -177,33 +181,31 @@ var position = (function (){
       }
     }
 
-
     var reportPosition = function ( position ){
-
-            // position.coords.latitude
-            // position.coords.longitude
-            // 'key=AIzaSyCzGkfTYLGyBb9eM9bWgjlhmBdldBSBwNA';
+        coordinates.lat  = parseFloat(position.coords.latitude);
+        coordinates.lng  = parseFloat(position.coords.longitude);
     }
 
     var gpsError = function ( error ){
+      coordinates.lat  = -1;
+      coordinates.lng  = -1;
+
       var errors = {
         1: 'Permission denied',
         2: 'Position unavailable',
         3: 'Request timeout'
       };
 
-      /* Hide the loading icon svg before showing user notification. */
-      svgLoadingIcon.style.display="none";
       alert("Error: " + errors[error.code]);
     }
 
-    var resetPositionDIVs= function(){
-
+    var getCurrentCoordinates = function(){
+        return coordinates;
     }
 
     return{
-        getCurrentLocation: getCurrentLocation,
-        resetPositionDIVs: resetPositionDIVs
+        triggerRequest: triggerRequest,
+        getCurrentCoordinates: getCurrentCoordinates
     }
 })();
 
@@ -212,6 +214,7 @@ var siteNavigator = (function(){
     var numPages = 0;
     var currentPageId = null;
     var modalSection;
+    var mapCanvas = null;
 
     var init = function(){
 
@@ -259,6 +262,26 @@ var siteNavigator = (function(){
 
         var okBtnHammerManager = new Hammer( document.getElementById("btnOk"));
         okBtnHammerManager.on('tap', handleOkTap);
+
+
+        /* Wait until the trigger of current location request is timed-out.
+        TODO: handle error case by showing a warning message to the user to open his GPS
+        and try again */
+        setTimeout(loadMap, 3600);
+    }
+
+    var loadMap = function (){
+
+        console.log("latitude : "+ position.getCurrentCoordinates().lat);
+        console.log("longitude: "+ position.getCurrentCoordinates().lng);
+        var mapOptions = {
+          center: {lat: 45.3486,
+                   lng: -75.7558},
+          zoom: 8
+        };
+
+        mapCanvas = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
     }
 
     var handleCancelTap = handleOkTap = function(ev){
@@ -267,7 +290,13 @@ var siteNavigator = (function(){
 
     var handleContactDoubleTap = function(ev){
         console.log("Double tap event has been recognized");
-        /* TODO: transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
+        /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
+        doPageTransition("contacts","location", true, false);
+
+        /*  since location section was hidden while loading the map, div dimensions were zero,
+            trigger resize event so that map tiles are rendered properly after showing the location section.*/
+        google.maps.event.trigger(mapCanvas, 'resize');
+        // mapCanvas.setZoom(mapCanvas.getZoom());
     }
 
     var handleContactSingleTap = function(ev){
@@ -344,16 +373,13 @@ var siteNavigator = (function(){
             //home page first call
             pages[destPageId].classList.add("show");
             history.replaceState(null, null, "#"+destPageId);
-            setTimeout(function(){
-                window.scrollTo(0,0);
-            },10);
         }else{
 
             /* Set active-page class to the corresponding page. First hide the current
             page, then show the destination page. Finally start animation while showing
             the destiation page.*/
-            pages[srcPageId].className = "hide";
-            pages[destPageId].className =  "show";
+            pages[srcPageId].classList.remove("show");
+            pages[destPageId].classList.add("show");
 
             loadDynamicContents(destPageId);
 
@@ -374,6 +400,10 @@ var siteNavigator = (function(){
 
             currentPageId = destPageId;
         }/* else srcPageId is not null*/
+
+        /* after loading any page, make sure to scroll to the top of this page. */
+        window.scrollTo(0,0);
+
     }
 
     //Listener for the popstate event to handle the back button

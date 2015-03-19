@@ -1,7 +1,7 @@
 *{
 	padding:0;
 	margin:0;
-  box-sizing: border-box;
+  /*box-sizing: border-box;*/
 }
 
 /* Clearfix
@@ -146,9 +146,6 @@ header{
   letter-spacing:0.3rem;
   word-spacing: 1rem;
   font-variant:small-caps;
-  /* increase the dueration of text stretch animation so that it won't capture the users's eye*/
-  -webkit-animation: text-stretch 2s infinite;
-  -webkit-animation-direction: alternate;
   /*font-size: 1.5rem;*/
 }
 
@@ -162,26 +159,22 @@ header{
     position: absolute;
     top: 60px;
     color: hsl(69,54%,21%);
-    min-height: 100%;
+    height: 100%; /* map canvas must have height to show the map. Therefore, this property must be set. */
+    /*min-height: 100%;*/
     width: 100%;
-    z-index: 5;
+    z-index: 0;
 }
 
 .active-page{
 /*    forwards value will keep the styles declared within the last specified keyframe i.e.
     opacity of destination page will remain 1. */
-    -webkit-animation: fade_in 1s ease-in-out forwards,
-                       rotation_and_zoom_in 1s ease-in-out forwards;
-/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
-    -moz-animation   : fade_in 4s ease-in-out forwards,
-                       zoome_in 4s ease-in-out forwards;
-/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
-    -o-animation     : fade_in 4s ease-in-out forwards,
-                       zoome_in 4s ease-in-out forwards;
-/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
-    animation        : fade_in 4s ease-in-out forwards,
-                       zoome_in 4s ease-in-out forwards;
-/*                       rotation_and_zoom_in 4s ease-in-out forwards;*/
+    -webkit-animation: fade_in 1s ease-in-out forwards;
+
+    -moz-animation   : fade_in 1s ease-in-out forwards;
+
+    -o-animation     : fade_in 1s ease-in-out forwards;
+
+    animation        : fade_in 1s ease-in-out forwards;
 }
 
 .show{
@@ -217,9 +210,10 @@ footer {
     animation        :  rotate 1s linear infinite;
 }
 
-#canvas-map{
-    padding-left: 2rem;
-    width: 70%;
+#map-canvas{
+    width: 90%; /* padding left is 5% + 90% so remaining is 5% to the right. */
+    height: 90%;
+    margin-bottom: 65px; /* same as fotter's height + 5px for spacing */
 }
 
 /* Conact Page Styling
@@ -227,6 +221,7 @@ footer {
 [data-role=listview]{
   list-style:none;
 }
+
 [data-role=listview] li{
   font-size:1.2rem;
   line-height:3.5rem;
@@ -248,12 +243,12 @@ footer {
 
 
 [data-role=listview] li:last-child{
-  margin-bottom: 60px; /* Same height of the footer, since it is fixed position. */
+  padding-bottom: 60px;  /*same as fotter's height. */
 }
 
 .contact-img{
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
 }
 
 .contact-name{
@@ -303,7 +298,7 @@ table tr{
 
 table tr th{
     font-size: 1.2rem;
-    width: 20%;
+    width: 35%;
     padding: 1.2rem 0;
     /*text-align: right;*/
 }
@@ -318,6 +313,8 @@ table tr td img{
     float: left;
     width: 50%;
     height: 2.5rem;
+    font-size: 1.2rem;
+    color: hsl(69,54%,21%);
     outline: 1px solid hsl(69,54%,21%);
     background-color: hsl(69,45%,82%);
 }
@@ -503,13 +500,3 @@ table tr td img{
     }
 }
 
-@-webkit-keyframes text-stretch {
-			0% {
-				-webkit-text-stroke: 15px #B1D400;
-				letter-spacing: 0;
-			}
-			100% {
-				-webkit-text-stroke: 20px #475500;
-				letter-spacing: 10px;
-			}
-}
