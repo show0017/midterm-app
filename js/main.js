@@ -1,7 +1,35 @@
+var bitMap = function(n){
+    var value = n;
+    var setBit = function(bitIndex){
+        console.log("old value is:"+value);
+        value |= (0x01<<bitIndex);
+        console.log("new value is:"+value);
+    }
+
+    var isBitSet = function(bitIndex){
+        console.log("actual value is:"+ value);
+        return value &(0x01<<bitIndex);
+    }
+
+    var reset = function(){
+        value = 0;
+    }
+
+    return {
+        reset: reset,
+        setBit: setBit,
+        isBitSet : isBitSet
+    }
+};
+
 var show0017 = (function(){
     var PAGE_LOADED_BIT_INDEX = 0;
     var DEVICE_READY_BIT_INDEX = 1;
-
+    /* This is a bit map that represents a bit for every events that is needed to be fired before
+    using locations/contacts services in the device.
+    There is a bit for DOMContentLoaded event and another bit for deviceready event.
+    Create a new instance for bit map with value zero which means no events have been recieved yet. */
+    var readyBitMap = new bitMap(0);
 
     var init = function(){
         document.addEventListener("deviceready", onDeviceReady, false);
@@ -14,14 +42,14 @@ var show0017 = (function(){
 
     var onDeviceReady = function(){
         console.log("Device is ready");
-        utilities.setBit(DEVICE_READY_BIT_INDEX);
+        readyBitMap.setBit(DEVICE_READY_BIT_INDEX);
         onReady();
 
     }
 
     var onPageLoaded = function(){
         console.log("Page is loaded");
-        utilities.setBit(PAGE_LOADED_BIT_INDEX);
+        readyBitMap.setBit(PAGE_LOADED_BIT_INDEX);
 
         /*TODO: remove the following line when you are testing on real device. */
         position.triggerRequest();
@@ -34,8 +62,9 @@ var show0017 = (function(){
     }
 
     var onReady = function(){
-        if(utilities.isBitSet(DEVICE_READY_BIT_INDEX) &&
-            utilities.isBitSet(PAGE_LOADED_BIT_INDEX)){
+        if(readyBitMap.isBitSet(DEVICE_READY_BIT_INDEX) &&
+            readyBitMap.isBitSet(PAGE_LOADED_BIT_INDEX)){
+
             siteNavigator.init();
             contacts.load();
             position.triggerRequest();
@@ -154,7 +183,7 @@ var svgIcons = (function(){
             element correctly.*/
             Snap.load( "svg/"+iconNameDataSet+".svg", (function (myCanvas) {
                 return function(fragment){
-                    var polygon = fragment.select( 'polygon' );
+                    var polygon = fragment.select( 'g' );
                     myCanvas.append( polygon );
                 }
             })(snapCanvas));
@@ -169,11 +198,32 @@ var svgIcons = (function(){
 
 var position = (function (){
 
-    var coordinates = {"lat":-1, "lng":-1};
+    var coordinates = {"lat":null, "lng":null};
+
+    /*  In chrome, I found out that the timeout error code have been received even after getting
+     *  position unavailable error code which violates what is stated in the Geolocation API:
+     *
+     *  "The timeout attribute denotes the maximum length of time (expressed in milliseconds) that is allowed to pass from
+     *  the call to getCurrentPosition() or watchPosition() until the corresponding successCallback is invoked.
+     *  If the implementation is unable to successfully acquire a new Position before the given timeout elapses,
+     *  and no other errors have occurred in this interval, then the corresponding errorCallback must be
+     *  invoked with a PositionError object whose code attribute is set to TIMEOUT."
+     *
+     *  As a workaround for this bug, an error bitMap is needed to check whether there is "POSITION_UNAVAILABLE"
+     *  error has been received before "TIMEOUT" error or not.
+     *  Note that I have tested the same code on Safari and it does not have this bug.
+     */
+    var errorsBitMap = new bitMap(0);
+
+    var PERMISSION_DENIED_BIT_INDEX = 0;
+    var POSITION_UNAVAILABLE_BIT_INDEX = 1;
+    var TIMEOUT_BIT_INDEX = 2;
 
     var triggerRequest = function(){
       if( navigator.geolocation ){
-          var params = {enableHighAccuracy: false, timeout:3600, maximumAge:60000};
+
+          /* The maximumAge attribute indicates that the application is willing to accept a cached position whose age is no greater than the specified time in milliseconds*/
+          var params = {enableHighAccuracy: true, timeout:3500, maximumAge:7000};
           navigator.geolocation.getCurrentPosition( reportPosition, gpsError, params );
       }else{
         //browser does not support geolocation api
@@ -187,25 +237,45 @@ var position = (function (){
     }
 
     var gpsError = function ( error ){
-      coordinates.lat  = -1;
-      coordinates.lng  = -1;
+      coordinates.lat  = null;
+      coordinates.lng  = null;
 
-      var errors = {
-        1: 'Permission denied',
-        2: 'Position unavailable',
-        3: 'Request timeout'
-      };
+      switch(error.code){
+        case error.PERMISSION_DENIED:
+            console.error("permission denied");
+            errorsBitMap.setBit(PERMISSION_DENIED_BIT_INDEX);
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.error("position unavailable");
+            errorsBitMap.setBit(POSITION_UNAVAILABLE_BIT_INDEX);
+            break;
+        case error.TIMEOUT:
+            console.error("position request timeout");
+            errorsBitMap.setBit(TIMEOUT_BIT_INDEX);
+            if(errorsBitMap.isBitSet(POSITION_UNAVAILABLE_BIT_INDEX)){
+                /* clear bit map and return since warning gps modal window have been displayed before
+                to the user upon receiving position unavailable error*/
+                errorsBitMap.reset();
+                return;
+            }
+      }
 
-      alert("Error: " + errors[error.code]);
+      /* display notification message to the user to make sure that GPS is turned on. */
+      document.querySelector('#gps-modal-window').className = "show";
     }
 
     var getCurrentCoordinates = function(){
         return coordinates;
     }
 
+    var isNull = function(){
+        return ((null === coordinates.lat) && (null === coordinates.lng));
+    }
+
     return{
         triggerRequest: triggerRequest,
-        getCurrentCoordinates: getCurrentCoordinates
+        getCurrentCoordinates: getCurrentCoordinates,
+        isNull : isNull
     }
 })();
 
@@ -213,12 +283,9 @@ var siteNavigator = (function(){
     var pages = {};
     var numPages = 0;
     var currentPageId = null;
-    var modalSection;
     var mapCanvas = null;
 
     var init = function(){
-
-        modalSection = document.querySelector('[data-role="modal"]');
 
         var pagesArray = document.querySelectorAll('[data-role="page"]');
         numPages = pagesArray.length;
@@ -263,6 +330,11 @@ var siteNavigator = (function(){
         var okBtnHammerManager = new Hammer( document.getElementById("btnOk"));
         okBtnHammerManager.on('tap', handleOkTap);
 
+        var cancelBtnGPSHammerManager = new Hammer( document.getElementById("btnCancelGPS"));
+        cancelBtnGPSHammerManager.on('tap', handleCancelTapForGPS);
+
+        var settingsBtnGPSHammerManager = new Hammer( document.getElementById("btnSettingsGPS"));
+        settingsBtnGPSHammerManager.on('tap', handleSettingsTapForGPS);
 
         /* Wait until the trigger of current location request is timed-out.
         TODO: handle error case by showing a warning message to the user to open his GPS
@@ -271,21 +343,39 @@ var siteNavigator = (function(){
     }
 
     var loadMap = function (){
+        console.log("Map is loading");
+        if(position.isNull()){
+            console.log("position is null");
+            var mapOptions = {
+                               center: {lat:0, lng:0},
+                               zoom:3
+                             };
+        }else{
+            /* Make sure to hide the toast failure message in case user double-tapped an item
+            before triggering the map loading. */
+            document.querySelector(".toast").style.opacity = 0;
+            var mapOptions = {
+                              center: position.getCurrentCoordinates(),
+                              zoom: 15
+                             };
 
-        console.log("latitude : "+ position.getCurrentCoordinates().lat);
-        console.log("longitude: "+ position.getCurrentCoordinates().lng);
-        var mapOptions = {
-          center: {lat: 45.3486,
-                   lng: -75.7558},
-          zoom: 8
-        };
+        }
 
         mapCanvas = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
     }
 
+    var handleSettingsTapForGPS = function(ev){
+        document.querySelector('#gps-modal-window').className = "hide";
+        /* TODO: Show Device settings app.*/
+    }
+
+    var handleCancelTapForGPS = function(ev){
+        document.querySelector('#gps-modal-window').className = "hide";
+    }
+
     var handleCancelTap = handleOkTap = function(ev){
-        modalSection.className = "hide";
+        document.querySelector('#contacts-modal-window').className = "hide";
     }
 
     var handleContactDoubleTap = function(ev){
@@ -293,10 +383,21 @@ var siteNavigator = (function(){
         /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
         doPageTransition("contacts","location", true, false);
 
+        if(position.isNull()){
+            /* User might double-tapped an item list before triggering loadMap method. Make sure to reset
+            opacity to zero if the postion cooradinates have been obtained successfully afterwards.*/
+            console.log("sitting opacity of toast message to 1");
+            document.querySelector(".toast").style.opacity = 1;
+        }else{
+            console.log("toast message will not be displayed");
+        }
+
         /*  since location section was hidden while loading the map, div dimensions were zero,
             trigger resize event so that map tiles are rendered properly after showing the location section.*/
         google.maps.event.trigger(mapCanvas, 'resize');
         // mapCanvas.setZoom(mapCanvas.getZoom());
+
+        /*clear any markers on the map. */
     }
 
     var handleContactSingleTap = function(ev){
@@ -319,7 +420,7 @@ var siteNavigator = (function(){
             /* TODO: Get all information stored in local storage. */
          }
 
-         modalSection.className = "show";
+         document.querySelector('#contacts-modal-window').className = "show";
 
     }
 
@@ -418,25 +519,6 @@ var siteNavigator = (function(){
     return {
         init : init,
         browserBackButton: browserBackButton
-    }
-})();
-
-var utilities = (function(){
-    var eventsMask = 0;
-    var setBit = function(bitIndex){
-        console.log("old value is:"+eventsMask);
-        eventsMask |= (0x01<<bitIndex);
-        console.log("new value is:"+eventsMask);
-    }
-
-    var isBitSet = function(bitIndex){
-        console.log("actual value is:"+ eventsMask);
-        return eventsMask &(0x01<<bitIndex);
-    }
-
-    return {
-        setBit: setBit,
-        isBitSet : isBitSet
     }
 })();
 

@@ -329,6 +329,36 @@ table tr td img{
     background-color: hsl(69, 48%, 71%);
 }
 
+#warning-triangle{
+    fill: hsl(69,45%,82%);
+}
+#warning-title{
+    display: inline-block;
+    /*If inline-block in question has its overflow property set to OTHER THAN visible. Then
+    its bottom margin would be on the baseline of the line of containing box i.e.
+    make sure to balance the down pushing effect by setting overflow to anyvalue other than visible.*/
+    overflow: hidden;
+}
+
+#warning-title ~ p{
+    padding-left: 5px;
+    font-size: 1.5rem;
+    padding: 1rem 0;
+}
+
+/* Toast Notification styling
+==================================================================*/
+.toast{
+    background-color: #ccc;
+    color: red;
+    position: fixed;
+    bottom: 70px; /*same as footer's height + 10px margin*/
+    opacity: 0;
+    /* Some tiles in Google maps have z-index 10000002, make sure that toast message is higher than this value*/
+    z-index: 10000003;
+    -webkit-transition: opacity 10s ease-in;
+    transition: opacity 10s ease-in;
+}
 
 /* Animations
 ==================================================================*/
