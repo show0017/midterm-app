@@ -156,6 +156,7 @@ header{
 =============================================================*/
 [data-role=page]{
     display: none;
+    opacity: 0;
     position: absolute;
     top: 60px;
     color: hsl(69,54%,21%);
@@ -163,10 +164,8 @@ header{
     /*min-height: 100%;*/
     width: 100%;
     z-index: 0;
-}
 
-.active-page{
-/*    forwards value will keep the styles declared within the last specified keyframe i.e.
+    /*    forwards value will keep the styles declared within the last specified keyframe i.e.
     opacity of destination page will remain 1. */
     -webkit-animation: fade_in 1s ease-in-out forwards;
 
@@ -175,6 +174,10 @@ header{
     -o-animation     : fade_in 1s ease-in-out forwards;
 
     animation        : fade_in 1s ease-in-out forwards;
+}
+
+.active-page{
+    opacity: 1;
 }
 
 .show{
@@ -212,8 +215,9 @@ footer {
 
 #map-canvas{
     width: 90%; /* padding left is 5% + 90% so remaining is 5% to the right. */
-    height: 90%;
-    margin-bottom: 65px; /* same as fotter's height + 5px for spacing */
+    height: 73vh;
+    /*margin-bottom: 65px;*/ /* same as fotter's height + 5px for spacing */
+    border: 1px solid hsl(69,54%,21%);
 }
 
 /* Conact Page Styling
@@ -289,6 +293,7 @@ footer {
   color:#fff;
   background-color: hsl(69,54%,21%);
   box-shadow:1px 1px 2px rgb(0,0,0);
+  box-sizing: border-box;
 }
 
 table tr{
@@ -329,21 +334,33 @@ table tr td img{
     background-color: hsl(69, 48%, 71%);
 }
 
-#warning-triangle{
+svg[data-icon-name]{
+    width: 32px;
+    height: 32px;
+}
+
+svg[data-icon-name] g *{
     fill: hsl(69,45%,82%);
 }
-#warning-title{
+
+
+[data-role=modal-details] h4{
     display: inline-block;
     /*If inline-block in question has its overflow property set to OTHER THAN visible. Then
     its bottom margin would be on the baseline of the line of containing box i.e.
     make sure to balance the down pushing effect by setting overflow to anyvalue other than visible.*/
     overflow: hidden;
+    font-size: 1.5rem;
 }
 
-#warning-title ~ p{
+[data-role=modal-details] p{
     padding-left: 5px;
     font-size: 1.5rem;
     padding: 1rem 0;
+}
+
+#btnOkUserLoc{
+    width: 100%;
 }
 
 /* Toast Notification styling
@@ -360,24 +377,28 @@ table tr td img{
     transition: opacity 10s ease-in;
 }
 
+/* Media Queries
+==================================================================*/
+
+
 /* Animations
 ==================================================================*/
 /**********  FADE IN ANIMATION ************/
 @-webkit-keyframes fade_in{
-    0%{opacity: 0;}
-    100%{opacity: 1;}
+
+    to {opacity: 1;}
 }
 @-moz-keyframes fade_in{
-    0%{opacity: 0;}
-    100%{opacity: 1;}
+
+    to {opacity: 1;}
 }
 @-o-keyframes fade_in{
-    0%{opacity: 0;}
-    100%{opacity: 1;}
+
+    to {opacity: 1;}
 }
 @keyframes fade_in {
-    0%{opacity: 0;}
-    100%{opacity: 1;}
+
+    to {opacity: 1;}
 }
 /**********  ZOOM IN ANIMATION ************/
 @-webkit-keyframes zoome_in{
