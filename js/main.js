@@ -1,6 +1,7 @@
 var appClass = function(){
     var PAGE_LOADED_BIT_INDEX = 0;
     var DEVICE_READY_BIT_INDEX = 1;
+    var MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS = 12;
 
     var bitMapClass = function(n){
         var value = n;
@@ -20,6 +21,53 @@ var appClass = function(){
             reset: reset,
             setBit: setBit,
             isBitSet : isBitSet
+        }
+    };
+
+    var storageClass = function(){
+        var information=[];
+
+        var isValidKey = function(key){
+            var availableKeys = ['id','name','numbers','emails','addressess','latLng'];
+            return (-1 !== availableKeys.indexOf(key));
+        };
+
+        var getData = function(userId, key){
+            var value = null;
+
+            if(('localStorage' in window) && (0 === information.length)){
+                information = JSON.parse(localStorage.getItem("contactsInfo"));
+            }
+
+            if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS > userId) &&
+                (information.length > userId) &&
+                (isValidKey(key)) ){
+                value = information[userId][key];
+            }
+
+            return value;
+        };
+
+        var saveData = function(userId, data){
+            data.id = userId;
+            if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS> userId) &&
+                ("object" === typeof data)){
+                for(var key in data){
+                    /* validate key.*/
+                    if(isValidKey(key)){
+                        information[userId][key] = data[key];
+                    }
+                }
+            }
+
+            if('localStorage' in window){
+                localStorage.setItem("contactsInfo", JSON.stringify(information));
+            }
+        };
+
+        return{
+            getData: getData,
+            saveData: saveData
         }
     };
 
@@ -73,21 +121,33 @@ var appClass = function(){
                 map: map
               });
 
-            /* TODO: get current user id */
-            /* TODO: save coordinates to local storage. */
+            /* get current user id */
+            var userId = siteNavigator.getCurrerntUserId();
 
+            /* save coordinates to local storage. */
+            storage.saveData(userId, event.latLng);
             /* add listener to the event of dragging the marker. */
             var markerDragHandler = google.maps.event.addListener(marker, "drag", function(event){
-                /* TODO: get current user id */
-                /* TODO: save coorodinates to local storage. */
+                storage.saveData(userId, event.latLng);
             });
+        }
+
+        var loadSavedMarker = function(index){
+            /* add the marker to the map */
+            markers[index].setMap(map);
+        }
+
+        var changeCenter = function(latLng){
+            map.setCenter(latLng);
         }
 
         return{
             loadMap: loadMap,
             resize: resize,
             registerEvent: registerEvent,
-            addNewMarker: addNewMarker
+            addNewMarker: addNewMarker,
+            loadSavedMarker: loadSavedMarker,
+            changeCenter: changeCenter
         }
     };
 
@@ -179,7 +239,7 @@ var appClass = function(){
         var numPages = 0;
         var currentPageId = null;
         var mapCanvas = null;
-        var mapDriver = new mapDriverClass();
+        var currentUserId = -1;
 
         var init = function(){
 
@@ -269,16 +329,23 @@ var appClass = function(){
              while(null === contactId){
                 currentTarget = currentTarget.parentNode;
                 contactId     = currentTarget.getAttribute("data-ref");
-                // console.log(currentTarget);
              }
 
              /* Make sure that we find a valid contanct list item */
              if(contactId){
-                /* TODO: 1. Get all information stored in local storage (if any) using the contact id. */
+                currentUserId = contactId;
+
+                /* Get the location information stored in local storage (if any) using the contact id. */
+                var latLng = storage.getData(currentUserId, "latLng");
+
                 /* TODO: 1. clear any markers on the map. */
-                /* TODO: 2. Check the localStorage data to see if the selected user has a latitude and longitude.*/
-                if(false){
-                    /*TODO: 3. If the user has a saved cooardinates in local storage, add an animated marker to the map.*/
+
+                /* Check the localStorage data to see if the selected user has a latitude and longitude.*/
+                if(null !== latLng){
+                    /*If the user has a saved cooardinates in local storage, add an animated marker to the map.*/
+                    mapDriver.loadSavedMarker(currentUserId);
+                    mapDriver.changeCenter(latLng);
+
                 }else{ /* case user does NOT have a stored cooardinates in local storage. */
 
                     if(position.isNull()){
@@ -292,7 +359,6 @@ var appClass = function(){
                         document.querySelector('#user-loc-modal-window').className = "show";
                     }
 
-                    /* TODO: 3. If they dont't have, display a dialog box hat tells the app user to double tap anywhere on the map to set a position for that contact.*/
                     mapDriver.registerEvent("dblclick", mapDriver.addNewMarker);
                 }
              }
@@ -307,6 +373,7 @@ var appClass = function(){
 
         var handleContactSingleTap = function(ev){
             console.log("Single tap event has been recognized");
+            var contactModalWindow = document.querySelector('#contacts-modal-window');
 
             /* display modal window that will display the contact's name as well as all phone numbers for that contact. */
 
@@ -318,36 +385,91 @@ var appClass = function(){
              while(null === contactId){
                 currentTarget = currentTarget.parentNode;
                 contactId     = currentTarget.getAttribute("data-ref");
-                // console.log(currentTarget);
              }
 
              /* Make sure that we find a valid contanct list item */
              if(contactId){
-                /* TODO: Get all information stored in local storage. */
-                // var timeStamp2 = Date.now();
-                // console.log("timeStamp1 = "+ timeStamp1);
-                // console.log("timeStamp2 = "+ timeStamp2);
-                // console.log("elapsed time = "+ (timeStamp2 - timeStamp1));
+                currentUserId = contactId;
+                /* information stored in local storage. */
+                var tablePlaceHolders = document.querySelectorAll("table tr td");
+                tablePlaceHolders[0].innerHTML = storage.getData(currentUserId, "name");
+
+                tablePlaceHolders[1].innerHTML ="";
+                var contactAddresses = storage.getData(currentUserId, "addressess");
+                for(var j=0; j<contactAddresses.length; j++ ){
+                    tablePlaceHolders[1].innerHTML += contactAddresses[j] + "<br>";
+                }
+
+                tablePlaceHolders[2].innerHTML = "";
+                var contactPhoneNumbers = storage.getData(currentUserId, "phones");
+                for(var j=0; j<contactPhoneNumbers.length; j++ ){
+                    tablePlaceHolders[2].innerHTML += contactPhoneNumbers[j] + "<br>";
+                }
+
+                tablePlaceHolders[3].innerHTML = "";
+                var contactEmails = storage.getData(currentUserId, "emails");
+                for(var j=0; j< contactEmails.length; j++){
+                    tablePlaceHolders[3].innerHTML += contactEmails[j] + "<br>";
+                }
+
+                // var img = tablePlaceHolders[4].querySelector("img");
+                // img.src="";
+                // if(contactInfo.photos){
+                //     img.src = contactInfo.photos[0].value;
+                // }
              }
 
-             document.querySelector('#contacts-modal-window').className = "show";
+             contactModalWindow.className = "show";
 
         }
 
         var loadDynamicContents = function(pageId){
             switch(pageId){
                 case "contacts":
+
+                    document.querySelector('.col-header:first-child').classList.add("hide");
+
                     /* Generate a random number from the available contacts to be displayed.
                     Note that a random number will be generated in the range (0, maximum length of contacts -1)*/
 
-                    // if(contacts.getEntries()){
+                     if(contacts.getEntries()){
+                        var listView = document.querySelector('ul[data-role="listview"]');
+                        /* display maximum 12 contacts. */
+                        for(var i=0;
+                            (i< contacts.getEntries().length) &&  (i< MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS);
+                            i++){
+                            var listItem = listView.querySelector('li[data-role="'+i+'"]');
+                            console.log(listItem);
 
-                    // }
+                            var contactNameTag = listItem.querySelector('p.contact-name');
+                            contactNameTag.innerHTML = contacts.getDisplayName(i);
 
-                    /* TODO: Save displayed contacts to local storage. */
+                            if(contacts.getPhoto(i)){
+                                var contactPhotoTag = listItem.querySelector('img.contact-img');
+                                contactPhotoTag.src = contacts.getPhoto(i);
+                            }
+
+                            if("none" === window.getComputedStyle(listItem,null).getPropertyValue("display")){
+                                listItem.classList.add("show");
+                                /* TODO: animate the movement of the list items. */
+                            }
+
+                            /* save displayed contacts to local storage. */
+                            storage.saveData(i,
+                                {
+                                     "name"       : contacts.getDisplayName(i),
+                                     "numbers"    : contacts.getPhoneNumbers(i),
+                                     "addressess" : contacts.getAddresses(i),
+                                     "emails"     : contacts.getEmails(i),
+                                     "latLng"     : contacts.getLocation(i)
+                                });
+                        }
+                    }
+
+
                     break;
                 case "location":
-
+                    document.querySelector('.col-header:first-child').classList.remove("hide");
                     break;
                 default:
             }
@@ -368,6 +490,7 @@ var appClass = function(){
 
                 //home page first call
                 pages[destPageId].classList.add("show");
+                loadDynamicContents(destPageId);
                 history.replaceState(null, null, "#"+destPageId);
             }else{
 
@@ -406,9 +529,14 @@ var appClass = function(){
             doPageTransition(currentPageId, destPageId, false);
         }
 
+        var getCurrerntUserId = function(){
+            return currentUserId;
+        }
+
         return {
             init : init,
-            handleBackButton: handleBackButton
+            handleBackButton: handleBackButton,
+            getCurrerntUserId: getCurrerntUserId
         }
     };
 
@@ -432,8 +560,8 @@ var appClass = function(){
                 element correctly.*/
                 Snap.load( "svg/"+iconNameDataSet+".svg", (function (myCanvas) {
                     return function(fragment){
-                        var polygon = fragment.select( 'g' );
-                        myCanvas.append( polygon );
+                        var group = fragment.select( 'g' );
+                        myCanvas.append( group );
                     }
                 })(snapCanvas));
 
@@ -445,6 +573,119 @@ var appClass = function(){
         }
     };
 
+    var contactClass = function(){
+        var numOfEntries=-1;
+        var entries = [];
+        var load = function(){
+
+            var options      = new ContactFindOptions();
+            options.filter   = ""; // A string can be used as a search filter when querying the contacts database
+            options.multiple = true; // return multiple results.
+
+            var fields       = [navigator.contacts.fieldType.displayName,
+                                navigator.contacts.fieldType.phoneNumbers,
+                                navigator.contacts.fieldType.addresses,
+                                navigator.contacts.fieldType.photos];
+
+            /* Asynchronously method to query the device contacts database.It returns an array of Contact objects.*/
+            navigator.contacts.find(fields, onSuccess, onError, options);
+        }
+
+        var onSuccess = function(contacts){
+            console.log("Found "+ contacts.length+ " on the phone");
+            entries = contacts;
+            numOfEntries = contacts.length;
+        }
+
+        var onError = function(contacts){
+            console.error("Error:"+ contacts.code);
+            numOfEntries = -1;
+            entries = [];
+        }
+
+        var getEntries = function(){
+            return entries;
+        }
+
+        var getDisplayName = function(index){
+            var displayName = "";
+            if(entries[index]){
+                displayName = entries[index].displayName;
+            }
+
+            return displayName;
+        }
+
+        var getAddresses = function(index){
+            var addressess=[];
+            if(entries[index]){
+                var array = entries[index].addresses;
+                for (var i=0; array && i< array.length; i++){
+                    addressess.push(array[i].formatted);
+                }
+            }
+            return addressess;
+        }
+
+        var getEmails = function(index){
+            var emails=[];
+            if(entries[index]){
+                var array = entries[index].emails;
+                for (var i=0; array && i< array.length; i++){
+                    emails.push(array[i].value);
+                }
+            }
+            return emails;
+        }
+
+        var getPhoneNumbers = function(index){
+            var phones=[];
+            if(entries[index]){
+                var array = entries[index].phoneNumbers;
+                for (var i=0; array && i< array.length; i++){
+                    phones.push(array[i].value);
+                }
+            }
+            return phones;
+        }
+
+        var getPhoto = function(index){
+            var photo = null;
+            if(entries[index] && entries[index].photos){
+                photo = entries[index].photos[0].value;
+            }
+
+            return photo;
+        }
+
+        var getLocation = function(index){
+            var latLng = null;
+            if(entries[index] && entries[index].latLng){
+                latLng = entries[index].latLng;
+            }
+
+            return latLng;
+        }
+
+        var setLocation = function(index, latLng){
+            if(entries[index]){
+                entries[index].latLng = latLng;
+            }
+        }
+
+        return{
+            load: load,
+            getEntries: getEntries,
+            getDisplayName: getDisplayName,
+            getAddresses: getAddresses,
+            getEmails: getEmails,
+            getPhoneNumbers: getPhoneNumbers,
+            getPhoto: getPhoto,
+            getLocation: getLocation,
+            setLocation: setLocation
+        }
+    };
+
     /* This is a bit map that represents a bit for every events that is needed to be fired before
     using locations/contacts services in the device.
     There is a bit for DOMContentLoaded event and another bit for deviceready event.
@@ -452,6 +693,9 @@ var appClass = function(){
     var readyBitMap = new bitMapClass(0);
     var position = new geolocationClass();
     var siteNavigator = new siteNavigatorClass();
+    var mapDriver = new mapDriverClass();
+    var contacts = new contactClass();
+    var storage = new storageClass();
 
     var init = function(){
         document.addEventListener("deviceready", onDeviceReady, false);
@@ -466,7 +710,6 @@ var appClass = function(){
         console.log("Device is ready");
         readyBitMap.setBit(DEVICE_READY_BIT_INDEX);
         onReady();
-
     }
 
     var onPageLoaded = function(){
@@ -481,7 +724,6 @@ var appClass = function(){
         var svgIcons = new svgClass();
         svgIcons.load();
         onReady();
-
     }
 
     var onReady = function(){
@@ -504,88 +746,6 @@ var appClass = function(){
         init: init
     }
 };
-
-var contacts = (function(){
-    var numOfEntries=-1;
-    var entries;
-    var load = function(){
-
-        var options      = new ContactFindOptions();
-        options.filter   = ""; // A string can be used as a search filter when querying the contacts database
-        options.multiple = true; // return multiple results.
-
-        var fields       = [navigator.contacts.fieldType.displayName,
-                            navigator.contacts.fieldType.phoneNumbers,
-                            navigator.contacts.fieldType.addresses,
-                            navigator.contacts.fieldType.photos];
-
-        /* Asynchronously method to query the device contacts database.It returns an array of Contact objects.*/
-        navigator.contacts.find(fields, onSuccess, onError, options);
-    }
-
-    var onSuccess = function(contacts){
-        console.log("Found "+ contacts.length+ " on the phone");
-        entries = contacts;
-        numOfEntries = contacts.length;
-    }
-
-    var onError = function(contacts){
-        console.error("Error:"+ contacts.code);
-        numOfEntries = -1;
-        entries = [];
-    }
-
-    var getEntries = function(){
-        return entries;
-    }
-
-    var getAddresses = function(index){
-        var addressess=[];
-        if(entries[index]){
-            var array = entries[index].addresses;
-            for (var i=0; array && i< array.length; i++){
-                addressess.push(array[i].formatted);
-            }
-        }
-        return addressess;
-    }
-
-    var getEmails = function(index){
-        var emails=[];
-        if(entries[index]){
-            var array = entries[index].emails;
-            for (var i=0; array && i< array.length; i++){
-                emails.push(array[i].value);
-            }
-        }
-        return emails;
-    }
-
-    var getPhoneNumbers = function(index){
-        var phones=[];
-        if(entries[index]){
-            var array = entries[index].phoneNumbers;
-            for (var i=0; array && i< array.length; i++){
-                phones.push(array[i].value);
-            }
-        }
-        return phones;
-    }
-
-    var saveToLocalStorage = function (listOfContacts){
-        console.error("saveToLocalStorage to be implemented");
-    }
-
-    return{
-        load: load,
-        getEntries: getEntries,
-        getAddresses: getAddresses,
-        getEmails: getEmails,
-        getPhoneNumbers: getPhoneNumbers,
-        saveToLocalStorage: saveToLocalStorage
-    }
-})();
-
 
 var show0017 = new appClass();
 show0017.init();

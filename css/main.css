@@ -39,9 +39,12 @@ html[xmlns] .clearfix {
 Menu Navigation button. */
 
 .col-header{
-    /* 10 + 10 + 70 = 90%, margin left is 10% that will be divided over two spacing. %*/
     float: left;
-    width: 100%;
+    width: 85%;
+}
+
+.col-header:first-child{
+    width: 10%;
 }
 
 .col-container{
