@@ -53,6 +53,9 @@ var appClass = function(){
 
             if('localStorage' in window){
                 information = JSON.parse(localStorage.getItem("contactsInfo"));
+                if(null === information){
+                    information = [];
+                }
             }
 
             if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS > userId) &&
