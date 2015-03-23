@@ -223,6 +223,10 @@ footer {
     border: 1px solid hsl(69,54%,21%);
 }
 
+#info-window{
+    background-color: hsl(69,54%,21%);
+    color: white;
+}
 /* Conact Page Styling
 ====================================================================*/
 [data-role=listview]{

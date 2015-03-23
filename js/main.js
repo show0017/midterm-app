@@ -150,6 +150,10 @@ var appClass = function(){
                 position: event.latLng,
                 draggable:true,
                 animation: google.maps.Animation.BOUNCE,
+                icon: { fillColor:"red",
+                        fillOpacity: 1,
+                        path:"M45.1,45.9H2.9c2-7.6,6.5-11.2,12.2-12.7c2.6,1.4,5.6,2.2,8.8,2.2c3.2,0,6.2-0.8,8.8-2.2C38.5,34.8,43,38.3,45.1,45.9z M38.7,16.7c0,8.1-6.6,14.7-14.7,14.7c-8.1,0-14.7-6.6-14.7-14.7C9.3,8.6,15.9,2.1,24,2.1C32.1,2.1,38.7,8.6,38.7,16.7z M35.2,21.1 H14.3c2.2,4.3,6.1,7.2,10.5,7.2C29.1,28.3,32.9,25.5,35.2,21.1z"
+                      },
                 map: map
               });
 
@@ -182,7 +186,20 @@ var appClass = function(){
                 markers[userId].position = event.latLng;
             });
 
-            setTimeout(function(){ marker.setAnimation(null);}, 3000);
+            var contentString = '<div id="info-window"><p>Contact name: '+
+                                    storage.getData(userId, "name")+
+                                    '</p></div>';
+            console.log(contentString);
+            var infowindow = new google.maps.InfoWindow({content: contentString});
+            google.maps.event.addListener(marker, 'click', function() {
+                                    infowindow.open(map,marker);
+                                  });
+
+            setTimeout(function(){
+                marker.setAnimation(null);
+                // infowindow.open(map,marker);
+            }, 3000);
+
         }
 
         var loadSavedMarker = function(latLng){
