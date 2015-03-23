@@ -28,21 +28,37 @@ var appClass = function(){
         var information=[];
 
         var isValidKey = function(key){
-            var availableKeys = ['id','name','numbers','emails','addressess','latLng'];
+            var availableKeys = ['id','name','phoneNumbers','emails','addressess','latLng'];
             return (-1 !== availableKeys.indexOf(key));
         };
+
+        var updateData = function(userId, data){
+            if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS> userId) &&
+                ("object" === typeof data)){
+                    for(var key in data){
+                    /* validate key.*/
+                    if(isValidKey(key)){
+                        information[userId][key] = data[key];
+                    }
+                }
+
+                if('localStorage' in window){
+                    localStorage.setItem("contactsInfo", JSON.stringify(information));
+                }
+            }
+        }
 
         var getData = function(userId, key){
             var value = null;
 
-            if(('localStorage' in window) && (0 === information.length)){
+            if('localStorage' in window){
                 information = JSON.parse(localStorage.getItem("contactsInfo"));
             }
 
             if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS > userId) &&
                 (information.length > userId) &&
                 (isValidKey(key)) ){
-                value = information[userId][key];
+                    value = information[userId][key];
             }
 
             return value;
@@ -52,12 +68,14 @@ var appClass = function(){
             data.id = userId;
             if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS> userId) &&
                 ("object" === typeof data)){
+                var finalObject = {};
                 for(var key in data){
                     /* validate key.*/
                     if(isValidKey(key)){
-                        information[userId][key] = data[key];
+                        finalObject[key] = data[key];
                     }
                 }
+                information.push(finalObject);
             }
 
             if('localStorage' in window){
@@ -67,7 +85,8 @@ var appClass = function(){
 
         return{
             getData: getData,
-            saveData: saveData
+            saveData: saveData,
+            updateData: updateData
         }
     };
 
@@ -77,27 +96,40 @@ var appClass = function(){
 
         var loadMap = function (){
             console.log("Map is loading");
-            if(position.isNull()){
-                console.log("position is null");
-                var mapOptions = {
-                                   center: {lat:0, lng:0},
-                                   zoom:3,
-                                   disableDoubleClickZoom: true
-                                 };
-            }else{
-                /* Make sure to hide the toast failure message in case user double-tapped an item
-                before triggering the map loading. */
-                document.querySelector(".toast").style.opacity = 0;
-                var mapOptions = {
-                                   center: position.getCurrentCoordinates(),
-                                   zoom: 15,
-                                   disableDoubleClickZoom: true
-                                 };
 
-            }
+        var styles = [
+                        {
+                          featureType: "water",
+                          stylers: [
+                                        { color: "#00EEFF" },
+                                        { saturation: -24}
+                                    ]
+                        }
+                      ];
 
-            map =  new google.maps.Map(document.getElementById('map-canvas'),
-                        mapOptions);
+
+        if(position.isNull()){
+            console.log("position is null");
+            var mapOptions = {
+                               center: {lat:0, lng:0},
+                               zoom:3,
+                               disableDoubleClickZoom: true
+                             };
+        }else{
+            /* Make sure to hide the toast failure message in case user double-tapped an item
+            before triggering the map loading. */
+            document.querySelector(".toast").style.opacity = 0;
+            var mapOptions = {
+                               center: position.getCurrentCoordinates(),
+                               zoom: 15,
+                               disableDoubleClickZoom: true
+                             };
+
+        }
+
+        map =  new google.maps.Map(document.getElementById('map-canvas'),
+                    mapOptions);
+        map.setOptions({styles: styles});
         };
 
         var resize = function(){
@@ -117,24 +149,54 @@ var appClass = function(){
             var marker = new google.maps.Marker({
                 position: event.latLng,
                 draggable:true,
-                animation: google.maps.Animation.DROP,
+                animation: google.maps.Animation.BOUNCE,
                 map: map
               });
 
             /* get current user id */
             var userId = siteNavigator.getCurrerntUserId();
 
+            if("function" === typeof event.latLng.lat){
+                var object = { "lat": event.latLng.lat(),
+                                "lng":event.latLng.lng()};
+            }else{
+                var object = {"lat": event.latLng.lat, "lng":event.latLng.lng};
+            }
+
             /* save coordinates to local storage. */
-            storage.saveData(userId, event.latLng);
+            storage.updateData(userId, {"latLng":object});
+
+            markers.splice(userId,0,marker);
             /* add listener to the event of dragging the marker. */
             var markerDragHandler = google.maps.event.addListener(marker, "drag", function(event){
-                storage.saveData(userId, event.latLng);
+
+                if("function" === typeof event.latLng.lat){
+                    var object = { "lat": event.latLng.lat(),
+                                    "lng":event.latLng.lng()};
+                }else{
+                    var object = {"lat": event.latLng.lat, "lng":event.latLng.lng};
+                }
+
+                /* save coordinates to local storage. */
+                storage.updateData(userId, {"latLng":object});
+                markers[userId].position = event.latLng;
             });
+
+            setTimeout(function(){ marker.setAnimation(null);}, 3000);
         }
 
-        var loadSavedMarker = function(index){
+        var loadSavedMarker = function(latLng){
+            var object = {"latLng": latLng};
             /* add the marker to the map */
-            markers[index].setMap(map);
+            addNewMarker(object);
+        }
+
+        var clearMarkers = function(){
+            for(var i=0; i< markers.length; i++){
+                markers[i].setMap(null);
+                markers[i] = null;
+            }
+            markers = [];
         }
 
         var changeCenter = function(latLng){
@@ -147,7 +209,8 @@ var appClass = function(){
             registerEvent: registerEvent,
             addNewMarker: addNewMarker,
             loadSavedMarker: loadSavedMarker,
-            changeCenter: changeCenter
+            changeCenter: changeCenter,
+            clearMarkers: clearMarkers
         }
     };
 
@@ -295,6 +358,9 @@ var appClass = function(){
             okBtnHammerManager = new Hammer(document.getElementById("btnOkUserLoc"));
             okBtnHammerManager.on('tap', handleOkTap);
 
+            var backBtnHammerManager = new Hammer(document.querySelector('svg[data-icon-name="back"]'));
+            backBtnHammerManager.on('tap', handleBackButton);
+
             /* Wait until the trigger of current location request is timed-out.
             handle error case by showing a warning message to the user to open his GPS */
             setTimeout(mapDriver.loadMap, 3600);
@@ -338,12 +404,20 @@ var appClass = function(){
                 /* Get the location information stored in local storage (if any) using the contact id. */
                 var latLng = storage.getData(currentUserId, "latLng");
 
-                /* TODO: 1. clear any markers on the map. */
+                /* clear any markers on the map. */
+                mapDriver.clearMarkers();
+
+                /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
+                doPageTransition("contacts","location", true);
+
+                /*  since location section was hidden while loading the map, div dimensions were zero,
+                    trigger resize event so that map tiles are rendered properly after showing the location section.*/
+                mapDriver.resize();
 
                 /* Check the localStorage data to see if the selected user has a latitude and longitude.*/
-                if(null !== latLng){
+                if(latLng){
                     /*If the user has a saved cooardinates in local storage, add an animated marker to the map.*/
-                    mapDriver.loadSavedMarker(currentUserId);
+                    mapDriver.loadSavedMarker(latLng);
                     mapDriver.changeCenter(latLng);
 
                 }else{ /* case user does NOT have a stored cooardinates in local storage. */
@@ -363,12 +437,6 @@ var appClass = function(){
                 }
              }
 
-            /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
-            doPageTransition("contacts","location", true);
-
-            /*  since location section was hidden while loading the map, div dimensions were zero,
-                trigger resize event so that map tiles are rendered properly after showing the location section.*/
-            mapDriver.resize();
         }
 
         var handleContactSingleTap = function(ev){
@@ -401,7 +469,7 @@ var appClass = function(){
                 }
 
                 tablePlaceHolders[2].innerHTML = "";
-                var contactPhoneNumbers = storage.getData(currentUserId, "phones");
+                var contactPhoneNumbers = storage.getData(currentUserId, "phoneNumbers");
                 for(var j=0; j<contactPhoneNumbers.length; j++ ){
                     tablePlaceHolders[2].innerHTML += contactPhoneNumbers[j] + "<br>";
                 }
@@ -438,8 +506,8 @@ var appClass = function(){
                         for(var i=0;
                             (i< contacts.getEntries().length) &&  (i< MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS);
                             i++){
-                            var listItem = listView.querySelector('li[data-role="'+i+'"]');
-                            console.log(listItem);
+
+                            var listItem = listView.querySelector('li[data-ref="'+i+'"]');
 
                             var contactNameTag = listItem.querySelector('p.contact-name');
                             contactNameTag.innerHTML = contacts.getDisplayName(i);
@@ -449,19 +517,16 @@ var appClass = function(){
                                 contactPhotoTag.src = contacts.getPhoto(i);
                             }
 
-                            if("none" === window.getComputedStyle(listItem,null).getPropertyValue("display")){
-                                listItem.classList.add("show");
-                                /* TODO: animate the movement of the list items. */
-                            }
+                            listItem.classList.remove("hide");
 
                             /* save displayed contacts to local storage. */
                             storage.saveData(i,
                                 {
                                      "name"       : contacts.getDisplayName(i),
-                                     "numbers"    : contacts.getPhoneNumbers(i),
+                                     "phoneNumbers"    : contacts.getPhoneNumbers(i),
                                      "addressess" : contacts.getAddresses(i),
                                      "emails"     : contacts.getEmails(i),
-                                     "latLng"     : contacts.getLocation(i)
+                                     "latLng"     : storage.getData("latLng")
                                 });
                         }
                     }
@@ -523,8 +588,8 @@ var appClass = function(){
         //Listener for the popstate event to handle the back button
         var handleBackButton = function (ev){
             ev.preventDefault();
-            var destPageId = location.hash.split("#")[1];  //hash will include the "#"
-
+            var destPageId = "contacts";
+            var currentPageId = "location";
             //update the visible data page.
             doPageTransition(currentPageId, destPageId, false);
         }
@@ -575,7 +640,15 @@ var appClass = function(){
 
     var contactClass = function(){
         var numOfEntries=-1;
-        var entries = [];
+        var entries =
+        [
+            {
+                displayName:"Wael Showair",
+                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+            }
+
+        ];
         var load = function(){
 
             var options      = new ContactFindOptions();
@@ -658,21 +731,6 @@ var appClass = function(){
             return photo;
         }
 
-        var getLocation = function(index){
-            var latLng = null;
-            if(entries[index] && entries[index].latLng){
-                latLng = entries[index].latLng;
-            }
-
-            return latLng;
-        }
-
-        var setLocation = function(index, latLng){
-            if(entries[index]){
-                entries[index].latLng = latLng;
-            }
-        }
-
         return{
             load: load,
             getEntries: getEntries,
@@ -680,9 +738,7 @@ var appClass = function(){
             getAddresses: getAddresses,
             getEmails: getEmails,
             getPhoneNumbers: getPhoneNumbers,
-            getPhoto: getPhoto,
-            getLocation: getLocation,
-            setLocation: setLocation
+            getPhoto: getPhoto
         }
     };
 
