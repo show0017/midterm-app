@@ -1,0 +1,560 @@
+*{
+	padding:0;
+	margin:0;
+  /*box-sizing: border-box;*/
+}
+
+/* Clearfix
+============================================================ */
+clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+/*
+==============================================================*/
+
+
+/* Grid
+===============================================================*/
+.col-container{
+    width: 100%;
+}
+/*There are three columns in the header section, they contain back button, app title and
+Menu Navigation button. */
+
+.col-header{
+    float: left;
+    width: 85%;
+}
+
+.col-header:first-child{
+    width: 10%;
+}
+
+.col-container{
+    width: 100%;
+}
+
+.col-3{
+    float: left;
+    width: 15%;
+    height: 3.5rem; /* same height as list item*/
+}
+
+.col-3:nth-child(2){
+    width: 70%;
+}
+
+@media screen and (orientation:landscape){
+    .col-3{
+        width: 10%;
+    }
+
+    .col-3:nth-child(2){
+        width: 80%;
+    }
+}
+
+
+/*
+===============================================================*/
+
+html{
+	width:100%;
+	height:100%;
+    background: hsl(69,45%,82%);
+    font-family: Calibri, Arial, Helvetica, sans-serif; /* First Font-Family Stack*/
+ }
+
+body,
+.st-container{
+    /* Let the body fills the whole page vertically*/
+    height: 100%;
+}
+
+
+
+/* This class is applied on body tag so that root font-size is set according to different screen
+sizes. Then any text paragraph can be set using rem unit. */
+.flexible-font{
+    font-size: 5vmin;
+}
+
+p{
+    font-size: 1.2rem;
+}
+
+/*h2, h3, p{
+	padding:0.6rem 2rem;
+}*/
+h2{
+    padding: 1rem 0;
+}
+
+h1,h2,h3,h4{
+    font-family: Tahoma, Verdana, Geneva; /* Second Font-Family Stack*/
+}
+
+
+/* Keep the scrollability of the web app but hide scrollbar as it has bad style on Devices' browser. */
+::-webkit-scrollbar {
+    display: none;
+}
+
+.vertical-center{
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.horizontal-align{
+  padding-left: 5%;
+}
+
+/*
+============================================================*/
+
+/* Header Styling
+============================================================*/
+header{
+    position: fixed;
+    top:0px;
+    background-color: hsl(69,54%,21%);
+    height: 60px;
+    z-index: 10;
+    transition: 0.5s margin ease;
+}
+
+[data-role="header"] h1{
+  text-shadow: 3px 2px 2px #475500;
+  -webkit-text-stroke: 1px #475500;
+  color: white;
+  text-align:center;
+  letter-spacing:0.3rem;
+  word-spacing: 1rem;
+  font-variant:small-caps;
+  /*font-size: 1.5rem;*/
+}
+
+/*
+============================================================*/
+
+/* Pages styling
+=============================================================*/
+[data-role=page]{
+    display: none;
+    opacity: 0;
+    position: absolute;
+    top: 60px;
+    color: hsl(69,54%,21%);
+    height: 100%; /* map canvas must have height to show the map. Therefore, this property must be set. */
+    /*min-height: 100%;*/
+    width: 100%;
+    z-index: 0;
+
+    /*    forwards value will keep the styles declared within the last specified keyframe i.e.
+    opacity of destination page will remain 1. */
+    -webkit-animation: fade_in 1s ease-in-out forwards;
+
+    -moz-animation   : fade_in 1s ease-in-out forwards;
+
+    -o-animation     : fade_in 1s ease-in-out forwards;
+
+    animation        : fade_in 1s ease-in-out forwards;
+}
+
+.active-page{
+    opacity: 1;
+}
+
+.show{
+	display:block;
+}
+.hide{
+	display:none;
+}
+
+/* Sticky Footer styling
+===============================================================*/
+footer {
+    color: white;
+    background-color: hsl(69,54%,21%);
+    /* Adjust position of footer with respect to main content div.*/
+    position: fixed;
+    bottom: 0;
+    height: 60px; /* Same height as header*/
+    width: 100%;
+    z-index: 10;
+}
+
+
+/* Location page styling
+==================================================================*/
+#inner-arch{
+    fill: #C6ED00;
+    /* Since artboard size is 300x300, change point around which rotation will take place to be middle of artboard instead of 0 0 (top-left corner)*/
+    transform-origin: 150px 150px;
+    -webkit-animation:  rotate 1s linear infinite;
+    -moz-animation   :  rotate 1s linear infinite;
+    -o-animation     :  rotate 1s linear infinite;
+    animation        :  rotate 1s linear infinite;
+}
+
+#map-canvas{
+    width: 90%; /* padding left is 5% + 90% so remaining is 5% to the right. */
+    height: 73vh;
+    /*margin-bottom: 65px;*/ /* same as fotter's height + 5px for spacing */
+    border: 1px solid hsl(69,54%,21%);
+}
+
+#info-window{
+    background-color: hsl(69,54%,21%);
+    color: white;
+}
+/* Conact Page Styling
+====================================================================*/
+[data-role=listview]{
+  list-style:none;
+}
+
+[data-role=listview] li{
+  font-size:1.2rem;
+  line-height:3.5rem;
+  height:3.5rem;
+  border:1px solid hsl(69,54%,21%);
+  background-color: hsl(69, 48%, 71%);
+  font-weight:300;
+  cursor:pointer;
+  color: hsl(69,54%,21%);
+}
+
+[data-role=listview] li:nth-child(even){
+    background-color: white;
+}
+
+[data-role=listview] li:hover{
+    background-color: hsla(69, 54%, 21% , 0.5);
+}
+
+
+[data-role=listview] li:last-child{
+  padding-bottom: 60px;  /*same as fotter's height. */
+}
+
+.contact-img{
+  width: 32px;
+  height: 32px;
+}
+
+.contact-name{
+    display: inline-block;
+    overflow: hidden;
+}
+
+.next_item_polygon{
+    fill: hsl(69,54%,21%);
+}
+
+/* Overlay and Modal window
+==================================================================*/
+[data-role=modal]{
+
+}
+
+[data-role=overlay]{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:15; /* Make it larger than z-index of both header and footer. */
+  height:100%;
+  width:100%;
+  background-color: rgba(0,0,0,0.82);
+}
+
+[data-role=modal-details]{
+  position:fixed;
+  top:20%;
+  left:10%;
+  width: 80%;
+  z-index:20; /* Make it larger than z-index of overlay div so that contents can be display. */
+  max-height:80%;
+  padding:5vh;
+  border:1px solid #333;
+  min-height:10%;
+  color:#fff;
+  background-color: hsl(69,54%,21%);
+  box-shadow:1px 1px 2px rgb(0,0,0);
+  box-sizing: border-box;
+}
+
+table tr{
+    text-align: left;
+    font-size: 1.2rem;
+}
+
+table tr th{
+    font-size: 1.2rem;
+    width: 35%;
+    padding: 1.2rem 0;
+    /*text-align: right;*/
+}
+
+table tr td img{
+    width: 150px;
+    height: 150px;
+}
+
+.btn{
+    border: 0;
+    float: left;
+    width: 50%;
+    height: 2.5rem;
+    font-size: 1.2rem;
+    color: hsl(69,54%,21%);
+    outline: 1px solid hsl(69,54%,21%);
+    background-color: hsl(69,45%,82%);
+}
+
+.btn:first-child{
+    border-right: 1px solid hsl(69,54%,21%);
+}
+
+.btn:hover,
+.btn:focus,
+.btn:active{
+    background-color: hsl(69, 48%, 71%);
+}
+
+svg[data-icon-name]{
+    width: 32px;
+    height: 32px;
+}
+
+svg[data-icon-name] g *{
+    fill: hsl(69,45%,82%);
+}
+
+
+[data-role=modal-details] h4{
+    display: inline-block;
+    /*If inline-block in question has its overflow property set to OTHER THAN visible. Then
+    its bottom margin would be on the baseline of the line of containing box i.e.
+    make sure to balance the down pushing effect by setting overflow to anyvalue other than visible.*/
+    overflow: hidden;
+    font-size: 1.5rem;
+}
+
+[data-role=modal-details] p{
+    padding-left: 5px;
+    font-size: 1.5rem;
+    padding: 1rem 0;
+}
+
+#btnOkUserLoc{
+    width: 100%;
+}
+
+/* Toast Notification styling
+==================================================================*/
+.toast{
+    background-color: #ccc;
+    color: red;
+    position: fixed;
+    bottom: 70px; /*same as footer's height + 10px margin*/
+    opacity: 0;
+    /* Some tiles in Google maps have z-index 10000002, make sure that toast message is higher than this value*/
+    z-index: 10000003;
+    -webkit-transition: opacity 10s ease-in;
+    transition: opacity 10s ease-in;
+}
+
+/* Media Queries
+==================================================================*/
+
+
+/* Animations
+==================================================================*/
+/**********  FADE IN ANIMATION ************/
+@-webkit-keyframes fade_in{
+
+    to {opacity: 1;}
+}
+@-moz-keyframes fade_in{
+
+    to {opacity: 1;}
+}
+@-o-keyframes fade_in{
+
+    to {opacity: 1;}
+}
+@keyframes fade_in {
+
+    to {opacity: 1;}
+}
+/**********  ZOOM IN ANIMATION ************/
+@-webkit-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@-moz-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@-o-keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+@keyframes zoome_in{
+    0%{
+        -webkit-transform: scale(0,0);
+        -moz-transform: scale(0,0);
+        -o-transform: scale(0,0);
+        transform: scale(0,0);
+    }
+    100%{
+        -webkit-transform: scale(1,1);
+        -moz-transform: scale(1,1);
+        -o-transform: scale(1,1);
+        transform: scale(1,1);
+    }
+}
+
+/**********  ROTATION & ZOOM-IN ANIMATION ************/
+@-webkit-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@-moz-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@-o-keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+@keyframes rotation_and_zoom_in{
+    0%{
+        -webkit-transform:rotate(360deg) scale(0,0);
+        -moz-transform:rotate(360deg) scale(0,0);
+        -o-transform:rotate(360deg) scale(0,0);
+        transform:rotate(360deg) scale(0,0);
+    }
+    100%{
+        -webkit-transform:scale(1,1);
+        -moz-transform:scale(1,1);
+        -o-transform:scale(1,1);
+        transform:scale(1,1);
+    }
+}
+
+/**********  ROTATE ANIMATION ************/
+@-webkit-keyframes rotate{
+
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-moz-keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-o-keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+

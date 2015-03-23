@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Midterm app</title>
+    <link rel="stylesheet" href="css/main.css">
+
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcZaBHO4FT7lnfYJy15gBzu9j3tL1oNIs">
+	</script>
+	<script type="text/javascript" src="js/hammer.min.js"></script>
+	<script type="text/javascript" src="js/snap.svg.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</head>
+<body class="flexible-font">
+
+<!-- Containter DIV for the whole page.-->
+<div class="st-container">
+
+        <header data-role="header" class="col-container clearfix">
+            <div class="col-header vertical-center horizontal-align">
+                <svg data-icon-name="back" viewBox="0 0 48 48"></svg>
+            </div>
+
+            <div class="col-header vertical-center">
+                <h1>Midterm App</h1>
+            </div>
+
+        </header>
+
+<!--    Main content of the website. It consists of three pages-->
+        <section id="contacts" data-role="page">
+		    <h2 class="horizontal-align">Contacts List</h2>
+		    <ul data-role="listview">
+		       <li data-ref="0"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 1</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="1"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 2</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="2"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 3</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="3"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 4</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="4"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 5</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="5"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 6</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="6"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 7</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="7"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 8</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="8"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 9</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="9"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 10</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="10"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 11</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		       <li data-ref="11"  class="horizontal-align col-container clearfix hide">
+			      <div class="col-3">
+			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
+			      </div>
+			      <div class="col-3">
+			      	<p class="contact-name ">Contact Name 12</p>
+		      	  </div>
+			      <div class="col-3">
+			      	<svg data-icon-name="next_item" class="vertical-center" viewBox="0 0 48 48">
+			      	</svg>
+		      	  </div>
+		      	</li>
+		    </ul>
+        </section> <!--  End of contacts section-->
+        <section id="location" data-role="page" class="horizontal-align">
+          	<h2>User's location</h2>
+          	<div id="map-canvas">
+
+          	</div>
+			<div id="toast-loc-fail" class="toast">
+				<p>Failed to get your current location</p>
+			</div>
+        </section> <!--  End of location section-->
+
+		<section data-role="modal" class="hide" id="contacts-modal-window">
+			<div data-role="overlay">&nbsp;</div>
+			<div data-role="modal-details">
+	    		<h4>Contact Details</h4>
+				<table>
+		            <tr>
+		                <th>Full Name</th>
+		                <td></td>
+		            </tr>
+		            <tr>
+		                <th>Address(es)</th>
+		                <td></td>
+		            </tr>
+		            <tr>
+		                <th>Phone Number(s)</th>
+		                <td></td>
+		            </tr>
+		            <tr>
+		                <th>Email(s)</th>
+		                <td></td>
+		            </tr>
+	            </table>
+	    		<form>
+			    	<div class="formBox">
+				        <input type="button" id="btnCancel" value="Cancel" class="btn"/>
+				        <input type="button" id="btnOk" value="OK" class="btn"/>
+			        </div>
+		        </form>
+	  		</div> <!-- End of modal window div -->
+		</section>
+
+		<section data-role="modal" class="hide" id="gps-modal-window">
+			<div data-role="overlay">&nbsp;</div>
+			<div data-role="modal-details">
+				<svg data-icon-name="warning" viewBox="0 0 48 48">
+				<h4 class="horizontal-align">Can't get current location</h4>
+				<hr>
+				<p>Turn on GPS in phone Settings</p>
+	    		<form>
+			    	<div class="formBox">
+				        <input type="button" id="btnCancelGPS" value="Cancel" class="btn"/>
+				        <input type="button" id="btnSettingsGPS" value="Settings" class="btn"/>
+			        </div>
+		        </form>
+			</div>
+		</section>
+
+		<section data-role="modal" class="hide" id="user-loc-modal-window">
+			<div data-role="overlay">&nbsp;</div>
+			<div data-role="modal-details">
+				<svg data-icon-name="information" viewBox="0 0 48 48">
+				<h4 class="horizontal-align">Setting Location</h4>
+				<hr>
+				<p>Double-tap on the map to set location for current user.<br>You can drag the location marker
+				   after creation.
+				</p>
+	    		<form>
+			    	<div class="formBox">
+				        <input type="button" id="btnOkUserLoc" value="OK" class="btn"/>
+			        </div>
+		        </form>
+			</div>
+		</section>
+        <footer class="horizontal-align">
+            <p class="vertical-center">© Algonquin College</p>
+        </footer>
+
+</div><!--  End of wrapper div-->
+</body>
+</html>
