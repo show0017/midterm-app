@@ -157,8 +157,9 @@ header{
 
 /* Pages styling
 =============================================================*/
-[data-role=page]{
-    display: none;
+[data-role="page"]{
+/*    display: none;*/
+    visibility: hidden;
     opacity: 0;
     position: absolute;
     top: 60px;
@@ -184,7 +185,8 @@ header{
 }
 
 .show{
-	display:block;
+/*	display:block;*/
+    visibility: visible;
 }
 .hide{
 	display:none;
@@ -267,10 +269,6 @@ footer {
     overflow: hidden;
 }
 
-.next_item_polygon{
-    fill: hsl(69,54%,21%);
-}
-
 /* Overlay and Modal window
 ==================================================================*/
 [data-role=modal]{
@@ -350,6 +348,9 @@ svg[data-icon-name] g *{
     fill: hsl(69,45%,82%);
 }
 
+svg[data-icon-name="next_item"] g *{
+    fill: hsl(69,54%,21%);
+}
 
 [data-role=modal-details] h4{
     display: inline-block;

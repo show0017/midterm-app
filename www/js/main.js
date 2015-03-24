@@ -32,6 +32,13 @@ var appClass = function(){
             return (-1 !== availableKeys.indexOf(key));
         };
 
+        var reset = function(){
+            information = [];
+            if('localStorage' in window){
+                localStorage.setItem("contactsInfo", JSON.stringify(information));
+            }
+        }
+
         var updateData = function(userId, data){
             if( (MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS> userId) &&
                 ("object" === typeof data)){
@@ -78,6 +85,7 @@ var appClass = function(){
                         finalObject[key] = data[key];
                     }
                 }
+//                information.splice(userId,0,finalObject);
                 information.push(finalObject);
             }
 
@@ -89,7 +97,8 @@ var appClass = function(){
         return{
             getData: getData,
             saveData: saveData,
-            updateData: updateData
+            updateData: updateData,
+            reset: reset
         }
     };
 
@@ -514,7 +523,7 @@ var appClass = function(){
         var loadDynamicContents = function(pageId){
             switch(pageId){
                 case "contacts":
-
+                    storage.reset();
                     document.querySelector('.col-header:first-child').classList.add("hide");
 
                     /* Generate a random number from the available contacts to be displayed.
@@ -621,7 +630,8 @@ var appClass = function(){
         return {
             init : init,
             handleBackButton: handleBackButton,
-            getCurrerntUserId: getCurrerntUserId
+            getCurrerntUserId: getCurrerntUserId,
+            loadDynamicContents: loadDynamicContents
         }
     };
 
@@ -662,12 +672,75 @@ var appClass = function(){
         var numOfEntries=-1;
         var entries =
         [
-            {
-                displayName:"Wael Showair",
-                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-            }
-
+//            {
+//                displayName:"Wael Showair1",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//            },
+//            {
+//                displayName:"Wael Showair2",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair3",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair4",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//            },
+//            {
+//                displayName:"Wael Showair5",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair6",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//
+//            {
+//                displayName:"Wael Showair7",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//            },
+//            {
+//                displayName:"Wael Showair8",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair9",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair10",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//            },
+//            {
+//                displayName:"Wael Showair11",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            },
+//            {
+//                displayName:"Wael Showair12",
+//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
+//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
+//
+//            }
         ];
         var load = function(){
 
@@ -688,6 +761,7 @@ var appClass = function(){
             console.log("Found "+ contacts.length+ " on the phone");
             entries = contacts;
             numOfEntries = contacts.length;
+            siteNavigator.loadDynamicContents("contacts");
         }
 
         var onError = function(contacts){
@@ -793,9 +867,9 @@ var appClass = function(){
         readyBitMap.setBit(PAGE_LOADED_BIT_INDEX);
 
         /*TODO: remove the following line when you are testing on real device. */
-        position.triggerRequest();
+//        position.triggerRequest();
         /*TODO: remove the following line when you are testing on real device.*/
-        siteNavigator.init();
+//        siteNavigator.init();
 
         var svgIcons = new svgClass();
         svgIcons.load();
@@ -805,10 +879,10 @@ var appClass = function(){
     var onReady = function(){
         if(readyBitMap.isBitSet(DEVICE_READY_BIT_INDEX) &&
             readyBitMap.isBitSet(PAGE_LOADED_BIT_INDEX)){
-
-            siteNavigator.init();
+            console.log("Both events have been fired");
             contacts.load();
             position.triggerRequest();
+            siteNavigator.init();
         }else{
             console.log("Both evenets has not been fired yet");
         }
