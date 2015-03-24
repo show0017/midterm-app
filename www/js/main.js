@@ -523,7 +523,7 @@ var appClass = function(){
         var loadDynamicContents = function(pageId){
             switch(pageId){
                 case "contacts":
-                    storage.reset();
+//                    storage.reset();
                     document.querySelector('.col-header:first-child').classList.add("hide");
 
                     /* Generate a random number from the available contacts to be displayed.
@@ -585,22 +585,23 @@ var appClass = function(){
                 //home page first call
                 pages[destPageId].classList.add("show");
                 loadDynamicContents(destPageId);
+                setTimeout(animatePage, 30, pages[destPageId]);
                 history.replaceState(null, null, "#"+destPageId);
             }else{
 
                 /* Set active-page class to the corresponding page. First hide the current
                 page, then show the destination page. Finally start animation while showing
                 the destiation page.*/
-                pages[srcPageId].classList.remove("show");
                 pages[srcPageId].classList.remove("active-page");
+                pages[srcPageId].classList.remove("show");
 
                 pages[destPageId].classList.add("show");
-
-                loadDynamicContents(destPageId);
 
                 /* Wait for 30 msec before applying the animation of page transition. This gives the
                 browser time to update all the divs before applying the animation*/
                 setTimeout(animatePage, 30, pages[destPageId]);
+                loadDynamicContents(destPageId);
+
 
                 if (isHistoryPush)
                     history.pushState(null, null, "#" + destPageId);

@@ -40,7 +40,7 @@ Menu Navigation button. */
 
 .col-header{
     float: left;
-    width: 85%;
+    width: 80%;
 }
 
 .col-header:first-child{
@@ -231,11 +231,11 @@ footer {
 }
 /* Conact Page Styling
 ====================================================================*/
-[data-role=listview]{
+[data-role="listview"]{
   list-style:none;
 }
 
-[data-role=listview] li{
+[data-role="listview"] li{
   font-size:1.2rem;
   line-height:3.5rem;
   height:3.5rem;
@@ -246,16 +246,16 @@ footer {
   color: hsl(69,54%,21%);
 }
 
-[data-role=listview] li:nth-child(even){
+[data-role="listview"] li:nth-child(even){
     background-color: white;
 }
 
-[data-role=listview] li:hover{
+[data-role="listview"] li:hover{
     background-color: hsla(69, 54%, 21% , 0.5);
 }
 
 
-[data-role=listview] li:last-child{
+[data-role="listview"] li:last-child{
   padding-bottom: 60px;  /*same as fotter's height. */
 }
 
@@ -271,11 +271,11 @@ footer {
 
 /* Overlay and Modal window
 ==================================================================*/
-[data-role=modal]{
+[data-role="modal"]{
 
 }
 
-[data-role=overlay]{
+[data-role="overlay"]{
   position:fixed;
   top:0;
   left:0;
@@ -285,11 +285,11 @@ footer {
   background-color: rgba(0,0,0,0.82);
 }
 
-[data-role=modal-details]{
+[data-role="modal-details"]{
   position:fixed;
   top:20%;
-  left:10%;
-  width: 80%;
+  left:5%;
+  width: 85%;
   z-index:20; /* Make it larger than z-index of overlay div so that contents can be display. */
   max-height:80%;
   padding:5vh;
@@ -352,7 +352,7 @@ svg[data-icon-name="next_item"] g *{
     fill: hsl(69,54%,21%);
 }
 
-[data-role=modal-details] h4{
+[data-role="modal-details"] h4{
     display: inline-block;
     /*If inline-block in question has its overflow property set to OTHER THAN visible. Then
     its bottom margin would be on the baseline of the line of containing box i.e.
@@ -361,7 +361,7 @@ svg[data-icon-name="next_item"] g *{
     font-size: 1.5rem;
 }
 
-[data-role=modal-details] p{
+[data-role="modal-details"] p{
     padding-left: 5px;
     font-size: 1.5rem;
     padding: 1rem 0;
