@@ -582,26 +582,25 @@ var appClass = function(){
 
             if(srcPageId == null){
 
-                //home page first call
-                pages[destPageId].classList.add("show");
+                pages[destPageId].classList.add("pt-page-current");
                 loadDynamicContents(destPageId);
                 setTimeout(animatePage, 30, pages[destPageId]);
                 history.replaceState(null, null, "#"+destPageId);
             }else{
 
-                /* Set active-page class to the corresponding page. First hide the current
-                page, then show the destination page. Finally start animation while showing
-                the destiation page.*/
-                pages[srcPageId].classList.remove("active-page");
-                pages[srcPageId].classList.remove("show");
+                pages[srcPageId].classList.add("pt-page-current");
+                pages[destPageId].classList.add("pt-page-current");
+                pages[srcPageId].classList.add("pt-page-flipOutLeft");
+                pages[destPageId].classList.add("pt-page-flipInRight");
 
-                pages[destPageId].classList.add("show");
-
-                /* Wait for 30 msec before applying the animation of page transition. This gives the
-                browser time to update all the divs before applying the animation*/
-                setTimeout(animatePage, 30, pages[destPageId]);
                 loadDynamicContents(destPageId);
 
+                setTimeout(function(){
+                                    pages[srcPageId].classList.remove("pt-page-current");
+                                    pages[srcPageId].classList.remove("pt-page-flipOutLeft");
+                                    // pages[destPageId].classList.remove("pt-page-current");
+                                    pages[destPageId].classList.remove("pt-page-flipInRight");
+                                }, 1500); /* 1500 msec (500 + 500 + 500)*/
 
                 if (isHistoryPush)
                     history.pushState(null, null, "#" + destPageId);
