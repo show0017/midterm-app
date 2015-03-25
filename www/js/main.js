@@ -565,7 +565,7 @@ var appClass = function(){
         }
 
         var doPageTransition = function( srcPageId, destPageId, isHistoryPush){
-
+            console.log("doPageTransition has been called");
             if(srcPageId == null){
 
                 pages[destPageId].classList.add("pt-page-current");
@@ -575,13 +575,24 @@ var appClass = function(){
 
                 pages[srcPageId].classList.add("pt-page-current");
                 pages[destPageId].classList.add("pt-page-current");
+                console.log("class pt-page-current is added to dest:"+destPageId);
                 pages[srcPageId].classList.add("pt-page-flipOutLeft");
                 pages[destPageId].classList.add("pt-page-flipInRight");
 
                 loadDynamicContents(destPageId);
 
                 setTimeout(function(){
-                                    pages[srcPageId].classList.remove("pt-page-current");
+                                    /*console.log("after animation, src is:"+srcPageId);
+                                    console.log("after animation, dest is:"+destPageId);
+                                    console.log("currentPageId is: "+ currentPageId);*/
+
+                                    if(currentPageId === srcPageId){
+                                        /* This means that the user has switched back-and-forth between the two screens.
+                                        Simply do nothing.*/
+                                    }else{
+                                        pages[srcPageId].classList.remove("pt-page-current");
+                                    }
+
                                     pages[srcPageId].classList.remove("pt-page-flipOutLeft");
 
                                     pages[destPageId].classList.remove("pt-page-flipInRight");
@@ -604,6 +615,12 @@ var appClass = function(){
             ev.preventDefault();
             var destPageId = "contacts";
             var currentPageId = "location";
+
+            var modals = document.querySelectorAll('[data-role="modal"]');
+            for (var i=0; i<modals.length; i++){
+                modals[i].className= "hide";
+            }
+
             //update the visible data page.
             doPageTransition(currentPageId, destPageId, false);
         }

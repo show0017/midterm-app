@@ -61,7 +61,11 @@ Menu Navigation button. */
     width: 70%;
 }
 
-@media screen and (min-width:500px){
+@media screen and (orientation:landscape){
+    .col-header{
+        width: 50%;
+    }
+
     .col-3{
         width: 10%;
     }
@@ -179,17 +183,19 @@ header{
   word-spacing: 1rem;
   font-variant:small-caps;
   position: relative;
-  transition: left 1s linear;
+  transition: all 1s linear;
 }
 
 .pushToRight{
-    left: 100%;
-    right: -100%;
+    /*  animations to be smooth and hardware-accelerated*/
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0%, 0);
 }
 
 .slideFromRight{
-    left: 0;
-    right: 0;
+    /*  animations to be smooth and hardware-accelerated*/
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 
 /*
@@ -199,7 +205,8 @@ header{
 =============================================================*/
 [data-role="page"]{
     /*overflow: hidden;*/
-    visibility: hidden;
+/*    visibility: hidden;*/
+    display: none;
     position: absolute;
     top: 60px;
     color: hsl(69,54%,21%);
@@ -217,7 +224,8 @@ header{
 }
 
 .pt-page-current{
-    visibility: visible;
+/*    visibility: visible;*/
+    display:block;
  }
 
 .active-page{
@@ -270,7 +278,7 @@ svg[data-icon-name="loading"] #inner-arch{
 #map-canvas{
     width: 90%; /* padding left is 5% + 90% so remaining is 5% to the right. */
     height: 73vh;
-    /*margin-bottom: 65px;*/ /* same as fotter's height + 5px for spacing */
+    margin-bottom: 65px; /* same as fotter's height + 5px for spacing */
     border: 1px solid hsl(69,54%,21%);
 }
 
