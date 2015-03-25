@@ -178,7 +178,18 @@ header{
   letter-spacing:0.3rem;
   word-spacing: 1rem;
   font-variant:small-caps;
-  /*font-size: 1.5rem;*/
+  position: relative;
+  transition: left 1s linear;
+}
+
+.pushToRight{
+    left: 100%;
+    right: -100%;
+}
+
+.slideFromRight{
+    left: 0;
+    right: 0;
 }
 
 /*

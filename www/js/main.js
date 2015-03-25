@@ -553,7 +553,9 @@ var appClass = function(){
                 case "contacts":
 //                    storage.reset();
                     document.querySelector('.col-header:first-child').classList.add("hide");
-
+                    setTimeout(function(){
+                        document.querySelector('[data-role="header"] h1').classList.add("slideFromRight");
+                    }, 30);
                     break;
                 case "location":
                     document.querySelector('.col-header:first-child').classList.remove("hide");
@@ -562,22 +564,12 @@ var appClass = function(){
             }
         }
 
-        var animatePage = function(pg){
-            pg.classList.add("active-page");
-        }
-
-        var hidePage = function(pg){
-            pg.className = "hide";
-        }
-
-        //Deal with history API and switching divs
         var doPageTransition = function( srcPageId, destPageId, isHistoryPush){
 
             if(srcPageId == null){
 
                 pages[destPageId].classList.add("pt-page-current");
                 loadDynamicContents(destPageId);
-                setTimeout(animatePage, 30, pages[destPageId]);
                 history.replaceState(null, null, "#"+destPageId);
             }else{
 
@@ -591,7 +583,7 @@ var appClass = function(){
                 setTimeout(function(){
                                     pages[srcPageId].classList.remove("pt-page-current");
                                     pages[srcPageId].classList.remove("pt-page-flipOutLeft");
-                                    // pages[destPageId].classList.remove("pt-page-current");
+
                                     pages[destPageId].classList.remove("pt-page-flipInRight");
                                 }, 1500); /* 1500 msec (500 + 500 + 500)*/
 
@@ -817,9 +809,9 @@ var appClass = function(){
         readyBitMap.setBit(PAGE_LOADED_BIT_INDEX);
 
         /*TODO: remove the following line when you are testing on real device. */
-//        position.triggerRequest();
+        position.triggerRequest();
         /*TODO: remove the following line when you are testing on real device.*/
-//        siteNavigator.init();
+        siteNavigator.init();
 
         var svgIcons = new svgClass();
         svgIcons.load();
