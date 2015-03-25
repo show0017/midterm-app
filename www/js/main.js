@@ -526,41 +526,6 @@ var appClass = function(){
 //                    storage.reset();
                     document.querySelector('.col-header:first-child').classList.add("hide");
 
-                    /* Generate a random number from the available contacts to be displayed.
-                    Note that a random number will be generated in the range (0, maximum length of contacts -1)*/
-
-                     if(contacts.getEntries()){
-                        var listView = document.querySelector('ul[data-role="listview"]');
-                        /* display maximum 12 contacts. */
-                        for(var i=0;
-                            (i< contacts.getEntries().length) &&  (i< MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS);
-                            i++){
-
-                            var listItem = listView.querySelector('li[data-ref="'+i+'"]');
-
-                            var contactNameTag = listItem.querySelector('p.contact-name');
-                            contactNameTag.innerHTML = contacts.getDisplayName(i);
-
-                            if(contacts.getPhoto(i)){
-                                var contactPhotoTag = listItem.querySelector('img.contact-img');
-                                contactPhotoTag.src = contacts.getPhoto(i);
-                            }
-
-                            listItem.classList.remove("hide");
-
-                            /* save displayed contacts to local storage. */
-                            storage.saveData(i,
-                                {
-                                     "name"       : contacts.getDisplayName(i),
-                                     "phoneNumbers"    : contacts.getPhoneNumbers(i),
-                                     "addressess" : contacts.getAddresses(i),
-                                     "emails"     : contacts.getEmails(i),
-                                     "latLng"     : storage.getData("latLng")
-                                });
-                        }
-                    }
-
-
                     break;
                 case "location":
                     document.querySelector('.col-header:first-child').classList.remove("hide");
@@ -669,79 +634,8 @@ var appClass = function(){
     };
 
     var contactClass = function(){
-        var numOfEntries=-1;
-        var entries =
-        [
-//            {
-//                displayName:"Wael Showair1",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//            },
-//            {
-//                displayName:"Wael Showair2",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair3",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair4",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//            },
-//            {
-//                displayName:"Wael Showair5",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair6",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//
-//            {
-//                displayName:"Wael Showair7",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//            },
-//            {
-//                displayName:"Wael Showair8",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair9",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair10",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//            },
-//            {
-//                displayName:"Wael Showair11",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            },
-//            {
-//                displayName:"Wael Showair12",
-//                addresses:[{formatted:"43A Waterbridge Drive, Nepean, ON"}],
-//                phoneNumbers:[{value:"647-773-6945"},{value:"613-346-7676"}]
-//
-//            }
-        ];
+        var entries = [];
+        var numOfEntries;
         var load = function(){
 
             var options      = new ContactFindOptions();
@@ -757,29 +651,61 @@ var appClass = function(){
             navigator.contacts.find(fields, onSuccess, onError, options);
         }
 
-        var onSuccess = function(contacts){
+        var onSuccess = function(phoneContacts){
             console.log("Found "+ contacts.length+ " on the phone");
-            entries = contacts;
-            numOfEntries = contacts.length;
+            entries = phoneContacts;
+            numOfEntries = phoneContacts.length;
+
+            for(var i=0;
+                (i< phoneContacts.length) &&  (i< MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS);
+                i++){
+
+                    /* save displayed contacts to local storage. */
+                    storage.saveData(i,
+                        {
+                             "name"       : getDisplayName(i),
+                             "phoneNumbers"    : getPhoneNumbers(i),
+                             "addressess" : getAddresses(i),
+                             "emails"     : getEmails(i),
+                             "latLng"     : storage.getData("latLng")
+                        });
+            }
+
+            var listView = document.querySelector('ul[data-role="listview"]');
+
+            /* display maximum 12 contacts. */
+            for(var i=0; i< MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS; i++){
+
+                var listItem = listView.querySelector('li[data-ref="'+i+'"]');
+
+                var contactNameTag = listItem.querySelector('p.contact-name');
+                contactNameTag.innerHTML = storage.getData(i,"name");
+
+                /* I did not want to save the photos into the local storage so I get it from the contacts object for now.
+                The only problem with this if the contact has been changed in another context away*/
+                if(contacts.getPhoto(i)){
+                    var contactPhotoTag = listItem.querySelector('img.contact-img');
+                    contactPhotoTag.src = contacts.getPhoto(i);
+                }
+
+                listItem.classList.remove("hide");
+            }
+
             siteNavigator.loadDynamicContents("contacts");
         }
 
         var onError = function(contacts){
             console.error("Error:"+ contacts.code);
-            numOfEntries = -1;
-            entries = [];
-        }
-
-        var getEntries = function(){
-            return entries;
         }
 
         var getDisplayName = function(index){
+            console.log("inside getDisplayName");
             var displayName = "";
             if(entries[index]){
                 displayName = entries[index].displayName;
+                console.log(displayName);
             }
-
+            console.log(entries);
             return displayName;
         }
 
@@ -827,7 +753,6 @@ var appClass = function(){
 
         return{
             load: load,
-            getEntries: getEntries,
             getDisplayName: getDisplayName,
             getAddresses: getAddresses,
             getEmails: getEmails,

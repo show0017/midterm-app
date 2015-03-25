@@ -97,12 +97,14 @@ body,
     height: 100%;
 }
 
+/*
 .pt-perspective {
     width: 100%;
     -webkit-perspective: 1200px;
     -moz-perspective: 1200px;
     perspective: 1200px;
 }
+*/
 
 /* This class is applied on body tag so that root font-size is set according to different screen
 sizes. Then any text paragraph can be set using rem unit. */
