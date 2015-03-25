@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/main.css">
 
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="LocationAndSettings.js"></script>
 	<script type="text/javascript"
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcZaBHO4FT7lnfYJy15gBzu9j3tL1oNIs">
 	</script>
@@ -187,7 +188,7 @@
         <section id="location" data-role="page" class="horizontal-align">
           	<h2>User's location</h2>
           	<div id="map-canvas">
-
+                <svg data-icon-name="loading" viewBox="0 0 300 300" ></svg>
           	</div>
 			<div id="toast-loc-fail" class="toast">
 				<p>Failed to get your current location</p>
@@ -229,9 +230,9 @@
 			<div data-role="overlay">&nbsp;</div>
 			<div data-role="modal-details">
 				<svg data-icon-name="warning" viewBox="0 0 48 48">
-				<h4 class="horizontal-align">Can't get current location</h4>
+				<h4 class="horizontal-align">Location service disabled</h4>
 				<hr>
-				<p>Turn on GPS in phone Settings</p>
+				<p>Turn on GPS in your phone Settings</p>
 	    		<form>
 			    	<div class="formBox">
 				        <input type="button" id="btnCancelGPS" value="Cancel" class="btn"/>

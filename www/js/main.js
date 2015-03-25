@@ -103,45 +103,46 @@ var appClass = function(){
     };
 
     var mapDriverClass = function (){
-        var map;
+        var map = null;
         var markers = [];
 
         var loadMap = function (){
-            console.log("Map is loading");
 
-        var styles = [
-                        {
-                          featureType: "water",
-                          stylers: [
-                                        { color: "#00EEFF" },
-                                        { saturation: -24}
-                                    ]
-                        }
-                      ];
+            var styles = [
+                            {
+                              /* change the color of water areas in the map*/
+                              featureType: "water",
+                              stylers: [
+                                            { color: "#00EEFF" },
+                                            { saturation: -24}
+                                        ]
+                            }
+                          ];
 
 
-        if(position.isNull()){
-            console.log("position is null");
-            var mapOptions = {
-                               center: {lat:0, lng:0},
-                               zoom:3,
-                               disableDoubleClickZoom: true
-                             };
-        }else{
-            /* Make sure to hide the toast failure message in case user double-tapped an item
-            before triggering the map loading. */
-            document.querySelector(".toast").style.opacity = 0;
-            var mapOptions = {
-                               center: position.getCurrentCoordinates(),
-                               zoom: 15,
-                               disableDoubleClickZoom: true
-                             };
+            if(position.isNull()){
+                console.log("position is null");
+                var mapOptions = {
+                                   center: {lat:0, lng:0},
+                                   zoom:3,
+                                   disableDoubleClickZoom: true
+                                 };
+            }else{
+                /* Make sure to hide the toast failure message in case user double-tapped an item
+                before triggering the map loading. */
+                document.querySelector(".toast").style.opacity = 0;
+                var mapOptions = {
+                                   center: position.getCurrentCoordinates(),
+                                   zoom: 15,
+                                   disableDoubleClickZoom: true
+                                 };
 
-        }
+            }
 
-        map =  new google.maps.Map(document.getElementById('map-canvas'),
-                    mapOptions);
-        map.setOptions({styles: styles});
+            map =  new google.maps.Map(document.getElementById('map-canvas'),
+                        mapOptions);
+            map.setOptions({styles: styles});
+            console.log("Map has been loaded");
         };
 
         var resize = function(){
@@ -149,12 +150,9 @@ var appClass = function(){
             // mapCanvas.setZoom(mapCanvas.getZoom());
         }
 
-        var registerEvent = function (eventType, callback,object){
-            if(!object){
-                object = map;
-            }
+        var registerEvent = function (eventType, callback){
             /* To save memory, register the event only once. */
-            google.maps.event.addListenerOnce(object, eventType, callback);
+            google.maps.event.addListenerOnce(map, eventType, callback);
         }
 
         var addNewMarker =  function(event){
@@ -162,7 +160,7 @@ var appClass = function(){
                 position: event.latLng,
                 draggable:true,
                 animation: google.maps.Animation.BOUNCE,
-                icon: { fillColor:"red",
+                icon: { fillColor:"red", /*load an svg icon instead of normal maker icon. */
                         fillOpacity: 1,
                         path:"M45.1,45.9H2.9c2-7.6,6.5-11.2,12.2-12.7c2.6,1.4,5.6,2.2,8.8,2.2c3.2,0,6.2-0.8,8.8-2.2C38.5,34.8,43,38.3,45.1,45.9z M38.7,16.7c0,8.1-6.6,14.7-14.7,14.7c-8.1,0-14.7-6.6-14.7-14.7C9.3,8.6,15.9,2.1,24,2.1C32.1,2.1,38.7,8.6,38.7,16.7z M35.2,21.1 H14.3c2.2,4.3,6.1,7.2,10.5,7.2C29.1,28.3,32.9,25.5,35.2,21.1z"
                       },
@@ -201,7 +199,7 @@ var appClass = function(){
             var contentString = '<div id="info-window"><p>Contact name: '+
                                     storage.getData(userId, "name")+
                                     '</p></div>';
-            console.log(contentString);
+
             var infowindow = new google.maps.InfoWindow({content: contentString});
             google.maps.event.addListener(marker, 'click', function() {
                                     infowindow.open(map,marker);
@@ -232,6 +230,10 @@ var appClass = function(){
             map.setCenter(latLng);
         }
 
+        var isMapLoaded = function(){
+            return null !== map;
+        }
+
         return{
             loadMap: loadMap,
             resize: resize,
@@ -239,7 +241,8 @@ var appClass = function(){
             addNewMarker: addNewMarker,
             loadSavedMarker: loadSavedMarker,
             changeCenter: changeCenter,
-            clearMarkers: clearMarkers
+            clearMarkers: clearMarkers,
+            isMapLoaded: isMapLoaded
         }
     };
 
@@ -268,7 +271,6 @@ var appClass = function(){
 
         var triggerRequest = function(){
           if( navigator.geolocation ){
-
               /* The maximumAge attribute indicates that the application is willing to accept a cached position whose age is no greater than the specified time in milliseconds*/
               var params = {enableHighAccuracy: true, timeout:3500, maximumAge:7000};
               navigator.geolocation.getCurrentPosition( reportPosition, gpsError, params );
@@ -281,6 +283,7 @@ var appClass = function(){
         var reportPosition = function ( position ){
             coordinates.lat  = parseFloat(position.coords.latitude);
             coordinates.lng  = parseFloat(position.coords.longitude);
+            mapDriver.loadMap();
         }
 
         var gpsError = function ( error ){
@@ -294,7 +297,12 @@ var appClass = function(){
                 break;
             case error.POSITION_UNAVAILABLE:
                 console.error("position unavailable");
+
+                /* display notification message to the user to make sure that GPS is turned on. */
+                document.querySelector('#gps-modal-window').className = "show";
+
                 errorsBitMap.setBit(POSITION_UNAVAILABLE_BIT_INDEX);
+                mapDriver.loadMap();
                 break;
             case error.TIMEOUT:
                 console.error("position request timeout");
@@ -304,11 +312,14 @@ var appClass = function(){
                     to the user upon receiving position unavailable error*/
                     errorsBitMap.reset();
                     return;
+                }else{
+                    /* display notification message to the user to make sure that GPS is turned on. */
+                    document.querySelector('#gps-modal-window').className = "show";
+
+                    mapDriver.loadMap();
                 }
           }
 
-          /* display notification message to the user to make sure that GPS is turned on. */
-          document.querySelector('#gps-modal-window').className = "show";
         }
 
         var getCurrentCoordinates = function(){
@@ -392,12 +403,14 @@ var appClass = function(){
 
             /* Wait until the trigger of current location request is timed-out.
             handle error case by showing a warning message to the user to open his GPS */
-            setTimeout(mapDriver.loadMap, 3600);
+//            setTimeout(mapDriver.loadMap, 3500);
         }
 
         var handleSettingsTapForGPS = function(ev){
             document.querySelector('#gps-modal-window').className = "hide";
-            /* TODO: Show Device settings app.*/
+            /* Show Device settings .*/
+            cordova.require('cordova/plugin/locationandsettings').
+                switchToLocationSettings();
         }
 
         var handleCancelTapForGPS = function(ev){
@@ -430,43 +443,58 @@ var appClass = function(){
              if(contactId){
                 currentUserId = contactId;
 
-                /* Get the location information stored in local storage (if any) using the contact id. */
-                var latLng = storage.getData(currentUserId, "latLng");
-
                 /* clear any markers on the map. */
                 mapDriver.clearMarkers();
 
-                /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map clear any markers that are currently on the map.*/
+                /* transition to the dynamic map screen. Using the fetched current gps position as the center of the map.*/
                 doPageTransition("contacts","location", true);
 
-                /*  since location section was hidden while loading the map, div dimensions were zero,
-                    trigger resize event so that map tiles are rendered properly after showing the location section.*/
-                mapDriver.resize();
+                 /* in case map is not loaded, display loading icon to the user. This case happens when the user double click
+                 and the postion request or map loading has not been finished yet.*/
+                 if(!mapDriver.isMapLoaded()){
+                     /* Display loading icon to the user. */
+                    document.querySelector('svg[data-icon-name="loading"]').style.display = "block";
+                    console.log("map is still not loaded");
+                    setTimeout(handleMapLoadingEvent, 3500);
+                 }else{
+                     handleMapLoadingEvent();
+                 }
+             }
+        }
 
-                /* Check the localStorage data to see if the selected user has a latitude and longitude.*/
-                if(latLng){
-                    /*If the user has a saved cooardinates in local storage, add an animated marker to the map.*/
-                    mapDriver.loadSavedMarker(latLng);
-                    mapDriver.changeCenter(latLng);
+        var handleMapLoadingEvent = function (){
+            /* Get the location information stored in local storage (if any) using the contact id. */
+            var latLng = storage.getData(currentUserId, "latLng");
 
-                }else{ /* case user does NOT have a stored cooardinates in local storage. */
+            /*  since location section was hidden while loading the map, div dimensions were zero,
+                trigger resize event so that map tiles are rendered properly after showing the location section.*/
+            mapDriver.resize();
 
-                    if(position.isNull()){
-                        /* User might double-tapped an item list before triggering loadMap method. Make sure to reset
-                        opacity to zero if the postion cooradinates have been obtained successfully afterwards.*/
-                        console.log("sitting opacity of toast message to 1");
-                        document.querySelector(".toast").style.opacity = 1;
-                    }else{
-                        console.log("toast message will not be displayed");
-                        /* display a dialog box that tells the app user to double tap anywhere on the map to set a position for that contact.*/
-                        document.querySelector('#user-loc-modal-window').className = "show";
-                    }
 
+            /* Check the localStorage data to see if the selected user has a latitude and longitude.*/
+            if(latLng){
+                /*If the user has a saved cooardinates in local storage, add an animated marker to the map.*/
+                mapDriver.loadSavedMarker(latLng);
+                mapDriver.changeCenter(latLng);
+
+            }else{ /* case user does NOT have a stored cooardinates in local storage. */
+                if(position.isNull()){
+                    /* User might double-tapped an item list before triggering loadMap method. Make sure to reset
+                    opacity to zero if the postion cooradinates have been obtained successfully afterwards.*/
+                    console.log("sitting opacity of toast message to 1");
+                    document.querySelector(".toast").style.opacity = 1;
+                    setTimeout(function(){document.querySelector(".toast").style.opacity = 0;}, 5000);
+                }else{
+                    console.log("toast message will not be displayed");
+                    /* display a dialog box that tells the app user to double tap anywhere on the map to set a position for that
+                    contact.*/
+                    document.querySelector('#user-loc-modal-window').className = "show";
                     mapDriver.registerEvent("dblclick", mapDriver.addNewMarker);
                 }
-             }
 
-        }
+
+            }
+         }
 
         var handleContactSingleTap = function(ev){
             console.log("Single tap event has been recognized");
@@ -699,13 +727,10 @@ var appClass = function(){
         }
 
         var getDisplayName = function(index){
-            console.log("inside getDisplayName");
             var displayName = "";
             if(entries[index]){
                 displayName = entries[index].displayName;
-                console.log(displayName);
             }
-            console.log(entries);
             return displayName;
         }
 

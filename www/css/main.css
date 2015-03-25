@@ -97,6 +97,19 @@ body,
     height: 100%;
 }
 
+svg[data-icon-name]{
+    width: 32px;
+    height: 32px;
+}
+
+svg[data-icon-name] g *{
+    fill: hsl(69,45%,82%);
+}
+
+svg[data-icon-name="next_item"] g *{
+    fill: hsl(69,54%,21%);
+}
+
 /*
 .pt-perspective {
     width: 100%;
@@ -224,8 +237,17 @@ footer {
 
 /* Location page styling
 ==================================================================*/
-#inner-arch{
-    fill: #C6ED00;
+svg[data-icon-name="loading"]{
+    width: 50%;
+    height: 50%;
+}
+
+svg[data-icon-name="loading"] #circle{
+    fill: hsl(69,54%,21%);
+}
+
+svg[data-icon-name="loading"] #inner-arch{
+    fill: hsl(69, 100%, 46%);
     /* Since artboard size is 300x300, change point around which rotation will take place to be middle of artboard instead of 0 0 (top-left corner)*/
     transform-origin: 150px 150px;
     -webkit-animation:  rotate 1s linear infinite;
@@ -355,19 +377,6 @@ table tr td img{
     background-color: hsl(69, 48%, 71%);
 }
 
-svg[data-icon-name]{
-    width: 32px;
-    height: 32px;
-}
-
-svg[data-icon-name] g *{
-    fill: hsl(69,45%,82%);
-}
-
-svg[data-icon-name="next_item"] g *{
-    fill: hsl(69,54%,21%);
-}
-
 [data-role="modal-details"] h4{
     display: inline-block;
     /*If inline-block in question has its overflow property set to OTHER THAN visible. Then
@@ -393,12 +402,13 @@ svg[data-icon-name="next_item"] g *{
     background-color: #ccc;
     color: red;
     position: fixed;
-    bottom: 70px; /*same as footer's height + 10px margin*/
+    left: 25%;
+    bottom: 170px; /*same as footer's height + 10px margin*/
     opacity: 0;
     /* Some tiles in Google maps have z-index 10000002, make sure that toast message is higher than this value*/
     z-index: 10000003;
-    -webkit-transition: opacity 10s ease-in;
-    transition: opacity 10s ease-in;
+    -webkit-transition: opacity 5s ease-in;
+    transition: opacity 5s ease-in;
 }
 
 /* Media Queries
@@ -439,4 +449,17 @@ svg[data-icon-name="next_item"] g *{
 
 @keyframes flipInRight {
     from { -webkit-transform: translateZ(-1000px) rotateY(90deg); transform: translateZ(-1000px) rotateY(90deg); opacity: 0.2; }
+}
+
+@-webkit-keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotate{
+    100%{
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
