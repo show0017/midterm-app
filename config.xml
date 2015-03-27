@@ -1,12 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="ca.edumedia.show0017.midterm" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Midterm</name>
+    <name>Show0017_Midterm</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="show0017@algonquinlive.com" href="https://github.com/show0017/midterm-app">
+        Wael Showair Midterm App
     </author>
     <content src="index.html" />
     <access origin="*" />
+
+    <platform name="android">
+<!--  <div>Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>-->
+      <icon src="www/img/ic_launcher_mdpi.png" density="mdpi" />
+      <icon src="www/img/ic_launcher_hdpi.png" density="hdpi" />
+      <icon src="www/img/ic_launcher_xhdpi.png" density="xhdpi" />
+      <icon src="www/img/ic_launcher_xxhdpi.png" density="xxhdpi" />
+      <icon src="www/img/ic_launcher_xxhdpi.png" density="xxxhdpi" />
+    </platform>
+
 </widget>

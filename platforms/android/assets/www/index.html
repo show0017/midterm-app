@@ -2,21 +2,27 @@
 <html lang="">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+<!--        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />-->
+
 	<title>Midterm app</title>
     <link rel="stylesheet" href="css/main.css">
 
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="LocationAndSettings.js"></script>
 	<script type="text/javascript"
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcZaBHO4FT7lnfYJy15gBzu9j3tL1oNIs">
 	</script>
-	<script type="text/javascript" src="js/hammer.min.js"></script>
+	<script type="text/javascript" src="js/hammer.js"></script>
 	<script type="text/javascript" src="js/snap.svg.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
 <body class="flexible-font">
 
 <!-- Containter DIV for the whole page.-->
-<div class="st-container">
+<div class="st-container pt-perspective">
 
         <header data-role="header" class="col-container clearfix">
             <div class="col-header vertical-center horizontal-align">
@@ -24,7 +30,7 @@
             </div>
 
             <div class="col-header vertical-center">
-                <h1>Midterm App</h1>
+                <h1 class="pushToRight">Midterm App</h1>
             </div>
 
         </header>
@@ -33,7 +39,7 @@
         <section id="contacts" data-role="page">
 		    <h2 class="horizontal-align">Contacts List</h2>
 		    <ul data-role="listview">
-		       <li data-ref="0"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="0"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -45,7 +51,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="1"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="1"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -57,7 +63,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="2"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="2"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -69,7 +75,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="3"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="3"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -81,7 +87,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="4"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="4"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -93,7 +99,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="5"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="5"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -105,7 +111,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="6"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="6"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -117,7 +123,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="7"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="7"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -129,7 +135,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="8"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="8"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -141,7 +147,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="9"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="9"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -153,7 +159,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="10"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="10"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -165,7 +171,7 @@
 			      	</svg>
 		      	  </div>
 		      	</li>
-		       <li data-ref="11"  class="horizontal-align col-container clearfix hide">
+		       <li data-ref="11"  class="horizontal-align col-container clearfix ">
 			      <div class="col-3">
 			      	<img class="contact-img vertical-center" src="img/default_user.png" alt="contact image">
 			      </div>
@@ -182,7 +188,7 @@
         <section id="location" data-role="page" class="horizontal-align">
           	<h2>User's location</h2>
           	<div id="map-canvas">
-
+                <svg data-icon-name="loading" viewBox="0 0 300 300" ></svg>
           	</div>
 			<div id="toast-loc-fail" class="toast">
 				<p>Failed to get your current location</p>
@@ -224,9 +230,9 @@
 			<div data-role="overlay">&nbsp;</div>
 			<div data-role="modal-details">
 				<svg data-icon-name="warning" viewBox="0 0 48 48">
-				<h4 class="horizontal-align">Can't get current location</h4>
+				<h4 class="horizontal-align">Location service disabled</h4>
 				<hr>
-				<p>Turn on GPS in phone Settings</p>
+				<p>Turn on GPS in your phone Settings</p>
 	    		<form>
 			    	<div class="formBox">
 				        <input type="button" id="btnCancelGPS" value="Cancel" class="btn"/>

@@ -35,7 +35,7 @@ var appClass = function(){
         var reset = function(){
             information = [];
             if('localStorage' in window){
-                localStorage.setItem("contactsInfo", JSON.stringify(information));
+                localStorage.setItem("show0017_contactInfo", JSON.stringify(information));
             }
         }
 
@@ -50,7 +50,7 @@ var appClass = function(){
                 }
 
                 if('localStorage' in window){
-                    localStorage.setItem("contactsInfo", JSON.stringify(information));
+                    localStorage.setItem("show0017_contactInfo", JSON.stringify(information));
                 }
             }
         }
@@ -59,7 +59,7 @@ var appClass = function(){
             var value = null;
 
             if('localStorage' in window){
-                information = JSON.parse(localStorage.getItem("contactsInfo"));
+                information = JSON.parse(localStorage.getItem("show0017_contactInfo"));
                 if(null === information){
                     information = [];
                 }
@@ -90,7 +90,7 @@ var appClass = function(){
             }
 
             if('localStorage' in window){
-                localStorage.setItem("contactsInfo", JSON.stringify(information));
+                localStorage.setItem("show0017_contactInfo", JSON.stringify(information));
             }
         };
 
@@ -104,7 +104,8 @@ var appClass = function(){
 
     var mapDriverClass = function (){
         var map = null;
-        var markers = [];
+        //var markers = [];
+        var g_marker;
 
         var loadMap = function (){
 
@@ -156,7 +157,7 @@ var appClass = function(){
         }
 
         var addNewMarker =  function(event){
-            var marker = new google.maps.Marker({
+            g_marker = new google.maps.Marker({
                 position: event.latLng,
                 draggable:true,
                 animation: google.maps.Animation.BOUNCE,
@@ -166,34 +167,37 @@ var appClass = function(){
                       },
                 map: map
               });
-
+            console.log("new marker must have been added to the map");
             /* get current user id */
             var userId = siteNavigator.getCurrerntUserId();
 
             if("function" === typeof event.latLng.lat){
+                /* lat is a function when user double clicks on the map to add new marker. It is used to get the
+                value of the latitude from the event object. */
                 var object = { "lat": event.latLng.lat(),
                                 "lng":event.latLng.lng()};
             }else{
+                console.log(typeof event.latLng.lat);
+                /* When loadSavedMarker is called I am using the same property latLng but in this case lat is not a function
+                but it is just a normal object.*/
                 var object = {"lat": event.latLng.lat, "lng":event.latLng.lng};
             }
 
             /* save coordinates to local storage. */
             storage.updateData(userId, {"latLng":object});
 
-            markers.splice(userId,0,marker);
             /* add listener to the event of dragging the marker. */
-            var markerDragHandler = google.maps.event.addListener(marker, "drag", function(event){
-
+            var markerDragHandler = google.maps.event.addListener(g_marker, "drag", function(event){
                 if("function" === typeof event.latLng.lat){
                     var object = { "lat": event.latLng.lat(),
                                     "lng":event.latLng.lng()};
                 }else{
                     var object = {"lat": event.latLng.lat, "lng":event.latLng.lng};
                 }
-
                 /* save coordinates to local storage. */
                 storage.updateData(userId, {"latLng":object});
-                markers[userId].position = event.latLng;
+                //markers[userId].position = event.latLng;
+                g_marker.setPosition(event.latLng)
             });
 
             var contentString = '<div id="info-window"><p>Contact name: '+
@@ -201,12 +205,12 @@ var appClass = function(){
                                     '</p></div>';
 
             var infowindow = new google.maps.InfoWindow({content: contentString});
-            google.maps.event.addListener(marker, 'click', function() {
-                                    infowindow.open(map,marker);
+            google.maps.event.addListener(g_marker, 'click', function() {
+                                    infowindow.open(map,g_marker);
                                   });
 
             setTimeout(function(){
-                marker.setAnimation(null);
+                g_marker.setAnimation(null);
                 // infowindow.open(map,marker);
             }, 3000);
 
@@ -219,11 +223,10 @@ var appClass = function(){
         }
 
         var clearMarkers = function(){
-            for(var i=0; i< markers.length; i++){
-                markers[i].setMap(null);
-                markers[i] = null;
+            if(g_marker){
+                g_marker.setMap(null);
+                g_marker = null;
             }
-            markers = [];
         }
 
         var changeCenter = function(latLng){
@@ -498,6 +501,8 @@ var appClass = function(){
 
         var handleContactSingleTap = function(ev){
             console.log("Single tap event has been recognized");
+            currentPageId = "contacts-modal-window";
+            history.pushState(null, null, "#contacts-modal-window");
             var contactModalWindow = document.querySelector('#contacts-modal-window');
 
             /* display modal window that will display the contact's name as well as all phone numbers for that contact. */
@@ -614,15 +619,16 @@ var appClass = function(){
         var handleBackButton = function (ev){
             ev.preventDefault();
             var destPageId = "contacts";
-            var currentPageId = "location";
 
             var modals = document.querySelectorAll('[data-role="modal"]');
             for (var i=0; i<modals.length; i++){
                 modals[i].className= "hide";
             }
 
-            //update the visible data page.
-            doPageTransition(currentPageId, destPageId, false);
+            if(currentPageId ==="location"){
+                //update the visible data page.
+                doPageTransition(currentPageId, destPageId, false);
+            }
         }
 
         var getCurrerntUserId = function(){
@@ -689,7 +695,7 @@ var appClass = function(){
         }
 
         var onSuccess = function(phoneContacts){
-            console.log("Found "+ contacts.length+ " on the phone");
+            console.log("Found "+ phoneContacts.length+ " on the phone");
             entries = phoneContacts;
             numOfEntries = phoneContacts.length;
 
@@ -826,9 +832,9 @@ var appClass = function(){
         readyBitMap.setBit(PAGE_LOADED_BIT_INDEX);
 
         /*TODO: remove the following line when you are testing on real device. */
-        position.triggerRequest();
+        //position.triggerRequest();
         /*TODO: remove the following line when you are testing on real device.*/
-        siteNavigator.init();
+        //siteNavigator.init();
 
         var svgIcons = new svgClass();
         svgIcons.load();
@@ -839,8 +845,8 @@ var appClass = function(){
         if(readyBitMap.isBitSet(DEVICE_READY_BIT_INDEX) &&
             readyBitMap.isBitSet(PAGE_LOADED_BIT_INDEX)){
             console.log("Both events have been fired");
-            contacts.load();
             position.triggerRequest();
+            contacts.load();
             siteNavigator.init();
         }else{
             console.log("Both evenets has not been fired yet");

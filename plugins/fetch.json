@@ -10,5 +10,30 @@
             "type": "registry",
             "id": "org.apache.cordova.geolocation"
         }
+    },
+    "org.apache.cordova.console": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.console"
+        }
+    },
+    "com.neton.cordova.diagnostic": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/oaugustus/phonegap-diagnostic-plugin.git",
+            "subdir": "."
+        }
+    },
+    "net.avantic.diagnosticPlugin": {
+        "source": {
+            "type": "registry",
+            "id": "net.avantic.diagnosticplugin"
+        }
+    },
+    "sk.tamex.locationandsettings": {
+        "source": {
+            "type": "registry",
+            "id": "sk.tamex.locationandsettings"
+        }
     }
 }

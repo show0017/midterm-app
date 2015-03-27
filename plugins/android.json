@@ -11,6 +11,10 @@
                         {
                             "xml": "<feature name=\"Contacts\"><param name=\"android-package\" value=\"org.apache.cordova.contacts.ContactManager\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LocationAndSettings\"><param name=\"android-package\" value=\"sk.tamex.cordova.plugins.LocationAndSettings\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -38,6 +42,24 @@
                             "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
                             "count": 1
                         }
+                    ],
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
+                            "count": 1
+                        }
                     ]
                 }
             }
@@ -48,6 +70,12 @@
             "PACKAGE_NAME": "ca.edumedia.show0017.midterm"
         },
         "org.apache.cordova.geolocation": {
+            "PACKAGE_NAME": "ca.edumedia.show0017.midterm"
+        },
+        "org.apache.cordova.console": {
+            "PACKAGE_NAME": "ca.edumedia.show0017.midterm"
+        },
+        "sk.tamex.locationandsettings": {
             "PACKAGE_NAME": "ca.edumedia.show0017.midterm"
         }
     },

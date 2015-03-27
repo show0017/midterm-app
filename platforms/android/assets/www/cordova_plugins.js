@@ -68,7 +68,9 @@ module.exports.metadata =
 // TOP OF METADATA
 {
     "org.apache.cordova.contacts": "0.2.16",
-    "org.apache.cordova.geolocation": "0.3.12"
+    "org.apache.cordova.geolocation": "0.3.12",
+    "org.apache.cordova.console": "0.2.13",
+    "sk.tamex.locationandsettings": "1.0.1"
 }
 // BOTTOM OF METADATA
 });
